@@ -1,0 +1,164 @@
+{% extends "ai_tools/base.html" %}
+{% load static %}
+
+{% block title %}Thank You - Tool Submission | TechyVia{% endblock %}
+{% block meta_description %}Thank you for submitting a tool to our AI directory. We'll review it shortly.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/ai-tools.css' %}">
+<style>
+.thanks-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.thanks-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.thanks-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+    transition: left 0.8s ease;
+}
+
+.thanks-card:hover::before {
+    left: 100%;
+}
+
+.thanks-icon {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 3rem;
+    color: white;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.thanks-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.thanks-message {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.next-steps {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: left;
+}
+
+.next-steps h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.next-steps ul {
+    list-style: none;
+    padding: 0;
+}
+
+.next-steps li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.next-steps i {
+    color: var(--secondary);
+    width: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="thanks-container">
+    <div class="thanks-card">
+        <div class="thanks-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <h1 class="thanks-title">Thank You!</h1>
+        
+        <p class="thanks-message">
+            Your AI tool submission has been received successfully. Our team will review it within 48 hours and get back to you via email.
+        </p>
+        
+        <div class="next-steps">
+            <h3><i class="fas fa-list-check"></i> What happens next?</h3>
+            <ul>
+                <li>
+                    <i class="fas fa-search"></i>
+                    Our team reviews your submission for quality and accuracy
+                </li>
+                <li>
+                    <i class="fas fa-envelope"></i>
+                    You'll receive an email notification about the status
+                </li>
+                <li>
+                    <i class="fas fa-globe"></i>
+                    If approved, your tool will be published in our directory
+                </li>
+                <li>
+                    <i class="fas fa-users"></i>
+                    The community can discover and benefit from your submission
+                </li>
+            </ul>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{% url 'ai_tools:tool_list' %}" class="btn-cyber">
+                <i class="fas fa-robot"></i> Browse AI Tools
+            </a>
+            <a href="{% url 'ai_tools:submit_tool' %}" class="btn-outline-cyber">
+                <i class="fas fa-plus"></i> Submit Another Tool
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

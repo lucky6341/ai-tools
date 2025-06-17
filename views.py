@@ -20,13 +20,16 @@ class ToolListView(ListView):
         queryset = cache.get(cache_key)
         
         if not queryset:
-            queryset = AITool.objects.filter(is_featured=True).order_by('-popularity_score')
+            queryset = AITool.objects.all().order_by('-is_featured', '-popularity_score')
             
             # Filtering
             category = self.request.GET.get('category')
             pricing = self.request.GET.get('pricing')
             search = self.request.GET.get('q')
             complexity = self.request.GET.get('complexity')
+            api = self.request.GET.get('api')
+            opensource = self.request.GET.get('opensource')
+            freetier = self.request.GET.get('freetier')
             
             if category:
                 queryset = queryset.filter(categories__slug=category)
@@ -34,12 +37,27 @@ class ToolListView(ListView):
                 queryset = queryset.filter(pricing_type=pricing)
             if complexity:
                 queryset = queryset.filter(technical_complexity__lte=complexity)
+            if api:
+                queryset = queryset.filter(api_available=True)
+            if opensource:
+                queryset = queryset.filter(open_source=True)
+            if freetier:
+                queryset = queryset.filter(pricing_type__in=['FRE', 'FRP'])
             if search:
                 queryset = queryset.filter(
                     Q(name__icontains=search) |
                     Q(short_description__icontains=search) |
                     Q(description__icontains=search)
                 )
+            
+            # Sorting
+            sort = self.request.GET.get('sort', 'popular')
+            if sort == 'newest':
+                queryset = queryset.order_by('-created')
+            elif sort == 'name':
+                queryset = queryset.order_by('name')
+            else:  # popular
+                queryset = queryset.order_by('-is_featured', '-popularity_score', '-view_count')
             
             # Annotate with usage count for sorting
             queryset = queryset.annotate(usage_count=Count('comparisons'))
@@ -49,7 +67,7 @@ class ToolListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.annotate(tool_count=Count('tools'))
+        context['ai_categories'] = Category.objects.annotate(tool_count=Count('tools')).filter(tool_count__gt=0)
         context['pricing_types'] = AITool.PRICING_TYPES
         context['featured_tools'] = get_featured_tools()[:6]
         context['ad_placements'] = AdPlacement.objects.filter(is_active=True)
@@ -67,7 +85,7 @@ class ToolDetailView(DetailView):
         
         # Increment view count
         tool.view_count += 1
-        tool.save()
+        tool.save(update_fields=['view_count'])
         
         # Get similar tools
         context['similar_tools'] = get_tool_recommendations(tool.id)[:5]
@@ -100,7 +118,7 @@ class ToolComparisonView(DetailView):
         # Increment view count
         comparison = self.object
         comparison.view_count += 1
-        comparison.save()
+        comparison.save(update_fields=['view_count'])
         
         return context
 
@@ -150,22 +168,54 @@ def ai_tool_quiz(request):
     if request.method == 'POST':
         # Process quiz answers
         use_case = request.POST.get('use_case')
+        tech_level = request.POST.get('tech_level')
         budget = request.POST.get('budget')
-        expertise = request.POST.get('expertise')
+        team_size = request.POST.get('team_size')
+        deployment = request.POST.get('deployment')
+        features = request.POST.get('features', '').split(',')
         
         # Get recommendations based on answers
-        tools = AITool.objects.filter(
-            Q(use_case_matrix__has_key=use_case) if use_case else Q(),
-            pricing_type__lte=budget,
-            technical_complexity__lte=expertise
-        ).order_by('-popularity_score')[:5]
+        queryset = AITool.objects.all()
+        
+        # Filter by use case
+        if use_case and use_case != 'other':
+            queryset = queryset.filter(
+                Q(use_case_matrix__has_key=use_case) |
+                Q(categories__slug__icontains=use_case)
+            )
+        
+        # Filter by budget
+        if budget == 'free':
+            queryset = queryset.filter(pricing_type='FRE')
+        elif budget == 'low':
+            queryset = queryset.filter(pricing_type__in=['FRE', 'FRP'])
+        elif budget == 'medium':
+            queryset = queryset.filter(pricing_type__in=['FRE', 'FRP', 'SUB'])
+        
+        # Filter by technical level
+        if tech_level == 'beginner':
+            queryset = queryset.filter(technical_complexity__lte=3)
+        elif tech_level == 'intermediate':
+            queryset = queryset.filter(technical_complexity__lte=6)
+        elif tech_level == 'advanced':
+            queryset = queryset.filter(technical_complexity__lte=8)
+        
+        # Filter by features
+        if 'api' in features:
+            queryset = queryset.filter(api_available=True)
+        if 'privacy' in features:
+            queryset = queryset.filter(open_source=True)
+        
+        tools = queryset.order_by('-popularity_score')[:10]
         
         return render(request, 'ai_tools/quiz_results.html', {
             'tools': tools,
             'criteria': {
                 'use_case': use_case,
+                'tech_level': tech_level,
                 'budget': budget,
-                'expertise': expertise
+                'team_size': team_size,
+                'deployment': deployment
             }
         })
     
@@ -184,4 +234,11 @@ class ToolSubmissionView(CreateView):
         return response
 
 def submission_thanks(request):
-    return render(request, 'ai_tools/submission_thanks.html')
+    return render(request, 'ai_tools/submission_thanks.html', {
+        'title': 'Thank You for Your Submission!',
+        'message': 'We appreciate your contribution to our AI tools directory. Our team will review your submission and get back to you soon.'
+    })
+
+def quiz_results(request):
+    # This view handles the quiz results
+    return render(request, 'ai_tools/quiz_results.html')

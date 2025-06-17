@@ -24,6 +24,10 @@ class Category(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    @property
+    def tool_count(self):
+        return self.tools.count()
+
 
 class Feature(models.Model):
     name = models.CharField(max_length=100)
@@ -93,6 +97,11 @@ class AITool(models.Model):
     @property
     def primary_category(self):
         return self.categories.first()
+
+    @property
+    def like_count(self):
+        # Placeholder for future implementation
+        return 0
 
     def save(self, *args, **kwargs):
         if not self.slug:

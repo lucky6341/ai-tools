@@ -15,6 +15,7 @@ urlpatterns = [
     
     # Interactive features
     path('quiz/', views.ai_tool_quiz, name='tool_quiz'),
+    path('quiz/results/', views.quiz_results, name='quiz_results'),
     
     # Submission
     path('submit-tool/', views.ToolSubmissionView.as_view(), name='submit_tool'),

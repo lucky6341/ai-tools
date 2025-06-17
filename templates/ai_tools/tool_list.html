@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "ai_tools/base.html" %}
 {% load static %}
 
 {% block title %}AI Tools Directory - TechyVia{% endblock %}
@@ -6,12 +6,18 @@
 
 {% block body_class %}ai-tools-list{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/ai-tools.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="ai-tools-container">
     <!-- Hero Section -->
     <section class="ai-tools-hero">
         <div class="hero-content">
-            <h1><i class="fas fa-robot"></i> AI Tools Directory</h1>
+            <h1 class="cyberpunk-text glow-text">
+                <i class="fas fa-robot"></i> AI Tools Directory
+            </h1>
             <p class="hero-description">
                 Discover, compare, and master the best AI tools, LLMs, and agents in one comprehensive directory
             </p>
@@ -30,17 +36,17 @@
             
             <!-- Quick Categories -->
             <div class="quick-categories">
-                <a href="?category=llm" class="category-pill">
-                    <i class="fas fa-brain"></i> LLMs
+                <a href="?category=text-content" class="category-pill">
+                    <i class="fas fa-pen-fancy"></i> Text & Content
                 </a>
-                <a href="?category=agent" class="category-pill">
-                    <i class="fas fa-cogs"></i> Agents
+                <a href="?category=image-design" class="category-pill">
+                    <i class="fas fa-image"></i> Image & Design
                 </a>
-                <a href="?category=image" class="category-pill">
-                    <i class="fas fa-image"></i> Image AI
+                <a href="?category=code-development" class="category-pill">
+                    <i class="fas fa-code"></i> Code & Development
                 </a>
-                <a href="?category=video" class="category-pill">
-                    <i class="fas fa-video"></i> Video AI
+                <a href="?category=agents-automation" class="category-pill">
+                    <i class="fas fa-robot"></i> Agents & Automation
                 </a>
                 <a href="?pricing=FRE" class="category-pill">
                     <i class="fas fa-dollar-sign"></i> Free Tools
@@ -75,13 +81,31 @@
                 <div class="filter-group">
                     <h4>Pricing</h4>
                     <ul class="filter-list">
-                        {% for value, label in AITool.PRICING_TYPES %}
                         <li>
-                            <a href="?pricing={{ value }}" class="{% if request.GET.pricing == value %}active{% endif %}">
-                                {{ label }}
+                            <a href="?pricing=FRE" class="{% if request.GET.pricing == 'FRE' %}active{% endif %}">
+                                Free
                             </a>
                         </li>
-                        {% endfor %}
+                        <li>
+                            <a href="?pricing=FRP" class="{% if request.GET.pricing == 'FRP' %}active{% endif %}">
+                                Freemium
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?pricing=SUB" class="{% if request.GET.pricing == 'SUB' %}active{% endif %}">
+                                Subscription
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?pricing=PAY" class="{% if request.GET.pricing == 'PAY' %}active{% endif %}">
+                                Pay-per-use
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?pricing=COM" class="{% if request.GET.pricing == 'COM' %}active{% endif %}">
+                                Commercial
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 
@@ -137,7 +161,7 @@
             <div class="sorting-options">
                 <div class="sort-by">
                     <span>Sort by:</span>
-                    <a href="?sort=popular" class="{% if request.GET.sort == 'popular' %}active{% endif %}">Most Popular</a>
+                    <a href="?sort=popular" class="{% if request.GET.sort == 'popular' or not request.GET.sort %}active{% endif %}">Most Popular</a>
                     <a href="?sort=newest" class="{% if request.GET.sort == 'newest' %}active{% endif %}">Newest</a>
                     <a href="?sort=name" class="{% if request.GET.sort == 'name' %}active{% endif %}">A-Z</a>
                 </div>
@@ -155,17 +179,18 @@
             <!-- Tools Grid -->
             <div class="tools-grid">
                 {% for tool in tools %}
-                <div class="tool-card">
+                <div class="tool-card" data-tool-id="{{ tool.id }}" data-tool-slug="{{ tool.slug }}">
                     <div class="tool-card-header">
                         <div class="tool-logo">
                             {% if tool.logo %}
-                            <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                            <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo" loading="lazy">
                             {% else %}
                             <div class="tool-icon">
                                 <i class="fas fa-robot"></i>
                             </div>
                             {% endif %}
                         </div>
+                        
                         <div class="tool-meta">
                             <span class="tool-category">
                                 <i class="{{ tool.primary_category.icon|default:'fas fa-cube' }}"></i>
@@ -173,8 +198,15 @@
                             </span>
                             <span class="tool-pricing {{ tool.pricing_type|lower }}">
                                 {{ tool.get_pricing_type_display }}
+                                {% if tool.price_range %}<span class="price-range">{{ tool.price_range }}</span>{% endif %}
                             </span>
                         </div>
+                        
+                        {% if tool.is_featured %}
+                        <div class="featured-badge">
+                            <i class="fas fa-star"></i> Featured
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <div class="tool-card-body">
@@ -187,15 +219,37 @@
                         
                         <div class="tool-features">
                             {% if tool.api_available %}
-                            <span class="tool-feature">
+                            <span class="tool-feature" title="API Access">
                                 <i class="fas fa-plug"></i> API
                             </span>
                             {% endif %}
                             {% if tool.open_source %}
-                            <span class="tool-feature">
+                            <span class="tool-feature" title="Open Source">
                                 <i class="fas fa-code-branch"></i> Open Source
                             </span>
                             {% endif %}
+                            {% if tool.pricing_type == 'FRE' or tool.pricing_type == 'FRP' %}
+                            <span class="tool-feature" title="Free Tier Available">
+                                <i class="fas fa-dollar-sign"></i> Free
+                            </span>
+                            {% endif %}
+                            {% if "Cloud" in tool.deployment_options %}
+                            <span class="tool-feature" title="Cloud Deployment">
+                                <i class="fas fa-cloud"></i> Cloud
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="tool-stats">
+                            <div class="stat">
+                                <i class="fas fa-eye"></i> {{ tool.view_count|default:0 }}
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-heart"></i> {{ tool.like_count|default:0 }}
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-chart-line"></i> {{ tool.popularity_score|floatformat:1 }}
+                            </div>
                         </div>
                     </div>
                     
@@ -206,7 +260,16 @@
                         <a href="{{ tool.website }}" target="_blank" class="btn-cyber">
                             <i class="fas fa-external-link-alt"></i> Visit
                         </a>
+                        <button class="compare-add" data-tool-id="{{ tool.id }}">
+                            <i class="fas fa-balance-scale"></i>
+                        </button>
                     </div>
+                    
+                    {% if tool.last_verified %}
+                    <div class="tool-verified">
+                        <i class="fas fa-shield-alt"></i> Verified {{ tool.last_verified|date:"M d, Y" }}
+                    </div>
+                    {% endif %}
                 </div>
                 {% empty %}
                 <div class="no-tools-found">
@@ -251,9 +314,9 @@
     
     <!-- Featured Comparisons -->
     <section class="featured-comparisons">
-        <h2><i class="fas fa-not-equal"></i> Popular Comparisons</h2>
+        <h2 class="cyberpunk-text"><i class="fas fa-balance-scale"></i> Popular Comparisons</h2>
         <div class="comparisons-grid">
-            <div class="comparison-card">
+            <div class="comparison-card glass-card">
                 <div class="comparison-header">
                     <h3>GPT-4 vs Claude 3</h3>
                     <p>Which LLM performs better for coding tasks?</p>
@@ -268,7 +331,7 @@
                 </a>
             </div>
             
-            <div class="comparison-card">
+            <div class="comparison-card glass-card">
                 <div class="comparison-header">
                     <h3>Midjourney vs Stable Diffusion</h3>
                     <p>Image generation quality comparison</p>
@@ -283,7 +346,7 @@
                 </a>
             </div>
             
-            <div class="comparison-card">
+            <div class="comparison-card glass-card">
                 <div class="comparison-header">
                     <h3>LangChain vs LlamaIndex</h3>
                     <p>Best framework for building AI agents</p>
@@ -303,7 +366,7 @@
     <!-- CTA Section -->
     <section class="ai-tools-cta">
         <div class="cta-content">
-            <h2>Can't find what you're looking for?</h2>
+            <h2 class="cyberpunk-text">Can't find what you're looking for?</h2>
             <p>Tell us what AI tool you need and we'll research it for you</p>
             <div class="cta-buttons">
                 <a href="{% url 'ai_tools:submit_tool' %}" class="btn-cyber">
@@ -316,4 +379,8 @@
         </div>
     </section>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'ai_tools/js/ai-tools.js' %}"></script>
 {% endblock %}

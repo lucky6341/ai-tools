@@ -19,14 +19,8 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     
     def tool_count(self, obj):
-        return obj.tools.count()
+        return obj.tool_count
     tool_count.short_description = "Tools"
-
-class ToolFeatureInline(admin.TabularInline):
-    model = AITool.features.through
-    extra = 1
-    verbose_name = "Feature"
-    verbose_name_plural = "Features"
 
 @admin.register(AITool)
 class AIToolAdmin(admin.ModelAdmin):

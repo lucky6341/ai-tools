@@ -1,6 +1,6 @@
 from .models import Category, AITool
 from django.core.cache import cache
-from django.db.models import Count  # Required for category counts
+from django.db.models import Count
 
 def ai_tools_context(request):
     """Add AI tools context to all templates"""
@@ -9,7 +9,7 @@ def ai_tools_context(request):
         cache_key = "all_categories"
         categories = cache.get(cache_key)
         if not categories:
-            categories = Category.objects.annotate(tool_count=Count('tools'))
+            categories = Category.objects.annotate(tool_count=Count('tools')).filter(tool_count__gt=0)
             cache.set(cache_key, categories, 60 * 60 * 12)  # Cache for 12 hours
         return categories
 

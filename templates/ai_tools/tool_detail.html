@@ -1,5 +1,6 @@
-{% extends "base.html" %}
+{% extends "ai_tools/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}{{ tool.name }} - AI Tool Details | TechyVia{% endblock %}
 {% block meta_description %}{{ tool.short_description }}{% endblock %}
@@ -8,8 +9,355 @@
 
 {% block body_class %}ai-tool-detail{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/ai-tools.css' %}">
+<style>
+.tool-detail-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.tool-header {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+    transition: left 0.8s ease;
+}
+
+.tool-header:hover::before {
+    left: 100%;
+}
+
+.tool-breadcrumb {
+    margin-bottom: 2rem;
+    color: var(--text-muted);
+}
+
+.tool-breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.tool-header-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 2rem;
+    align-items: center;
+}
+
+.tool-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--glass-border);
+}
+
+.tool-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tool-icon {
+    font-size: 3rem;
+    color: var(--primary);
+}
+
+.tool-header-info h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.tool-tagline {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.tool-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.tool-actions {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+.tool-detail-main {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 3rem;
+}
+
+.tool-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.tool-section h2 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.feature-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.rating-stars i {
+    color: var(--warning-orange);
+}
+
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.spec-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.spec-card i {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.complexity-meter {
+    background: var(--bg-primary);
+    border-radius: 10px;
+    height: 20px;
+    position: relative;
+    margin-top: 0.5rem;
+}
+
+.meter-fill {
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+.use-cases {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.use-case-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+}
+
+.use-case-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.sidebar-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.sidebar-card h3 {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    margin: 0;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pricing-info {
+    padding: 1.5rem;
+}
+
+.pricing-tier h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+.pricing-features {
+    list-style: none;
+    margin-bottom: 1.5rem;
+}
+
+.pricing-features li {
+    padding: 0.5rem 0;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pricing-features i {
+    color: var(--secondary);
+}
+
+.similar-tools-list {
+    padding: 1.5rem;
+}
+
+.similar-tool {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.similar-tool:hover {
+    background: var(--bg-secondary);
+    color: var(--primary);
+}
+
+.similar-tool-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.similar-tool-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.similar-tool-icon {
+    color: var(--primary);
+}
+
+.similar-tool-info h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.similar-tool-category {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 968px) {
+    .tool-header-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .tool-detail-main {
+        grid-template-columns: 1fr;
+    }
+    
+    .tool-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="ai-tool-detail-container">
+<div class="tool-detail-container">
     <!-- Tool Header -->
     <div class="tool-header">
         <div class="tool-breadcrumb">
@@ -42,18 +390,18 @@
                         {{ tool.get_pricing_type_display }}
                         {% if tool.price_range %}({{ tool.price_range }}){% endif %}
                     </span>
-                    
-                    <div class="tool-actions">
-                        <a href="{{ tool.website }}" target="_blank" class="btn-cyber">
-                            <i class="fas fa-external-link-alt"></i> Official Website
-                        </a>
-                        {% if tool.affiliate_link %}
-                        <a href="{{ tool.affiliate_link }}" target="_blank" class="btn-cyber">
-                            <i class="fas fa-shopping-cart"></i> Get Deal
-                        </a>
-                        {% endif %}
-                    </div>
                 </div>
+            </div>
+            
+            <div class="tool-actions">
+                <a href="{{ tool.website }}" target="_blank" class="btn-cyber">
+                    <i class="fas fa-external-link-alt"></i> Official Website
+                </a>
+                {% if tool.affiliate_link %}
+                <a href="{{ tool.affiliate_link }}" target="_blank" class="btn-outline-cyber">
+                    <i class="fas fa-shopping-cart"></i> Get Deal
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -66,32 +414,34 @@
             <section class="tool-section">
                 <h2><i class="fas fa-file-alt"></i> Overview</h2>
                 <div class="tool-description">
-                    {{ tool.description|safe }}
+                    {{ tool.description|linebreaks }}
                 </div>
             </section>
             
             <!-- Key Features -->
+            {% if tool.use_case_matrix %}
             <section class="tool-section">
                 <h2><i class="fas fa-star"></i> Key Features</h2>
                 <div class="features-grid">
                     {% for feature, score in tool.use_case_matrix.items %}
                     <div class="feature-card">
                         <div class="feature-header">
-                            <h3>{{ feature|title }}</h3>
+                            <h3>{{ feature|title|replace:"_":" " }}</h3>
                             <div class="feature-rating">
-                                <div class="rating-stars" style="--rating: {{ score }};">
+                                <div class="rating-stars">
                                     {% for i in "12345" %}
-                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star{% if forloop.counter <= score|floatformat:0|add:0|div:2 %} checked{% endif %}"></i>
                                     {% endfor %}
                                 </div>
                                 <span>{{ score }}/10</span>
                             </div>
                         </div>
-                        <p>How well this tool performs for {{ feature }} tasks</p>
+                        <p>How well this tool performs for {{ feature|replace:"_":" " }} tasks</p>
                     </div>
                     {% endfor %}
                 </div>
             </section>
+            {% endif %}
             
             <!-- Technical Details -->
             <section class="tool-section">
@@ -112,24 +462,18 @@
                     <div class="spec-card">
                         <i class="fas fa-server"></i>
                         <h3>Deployment</h3>
-                        <p>
-                            {% if tool.deployment_options %}
-                                {{ tool.deployment_options|join:", " }}
-                            {% else %}
-                                Cloud-based
-                            {% endif %}
-                        </p>
+                        <p>{{ tool.deployment_options|default:"Cloud-based" }}</p>
                     </div>
                     
                     <div class="spec-card">
                         <i class="fas fa-brain"></i>
                         <h3>Technical Level</h3>
                         <div class="complexity-meter">
-                            <div class="meter-fill" style="width: {{ tool.technical_complexity|add:'0' }}0%;"></div>
-                            <div class="meter-labels">
-                                <span>Beginner</span>
-                                <span>Expert</span>
-                            </div>
+                            <div class="meter-fill" style="width: {{ tool.technical_complexity|mul:10 }}%;"></div>
+                        </div>
+                        <div class="meter-labels">
+                            <span>Beginner</span>
+                            <span>Expert</span>
                         </div>
                     </div>
                 </div>
@@ -170,70 +514,6 @@
                     </div>
                 </div>
             </section>
-            
-            <!-- Tutorial/Getting Started -->
-            <section class="tool-section">
-                <h2><i class="fas fa-graduation-cap"></i> Getting Started</h2>
-                {% if tool.getting_started_video %}
-                <div class="video-container">
-                    <iframe src="{{ tool.getting_started_video }}" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen></iframe>
-                </div>
-                {% endif %}
-                
-                {% if tool.quick_start_guide %}
-                <div class="quick-start-guide">
-                    {{ tool.quick_start_guide|safe }}
-                </div>
-                {% else %}
-                <div class="quick-start-guide">
-                    <h3>Basic Usage Example</h3>
-                    <pre><code class="language-python">import {{ tool.name|slugify }}
-
-# Initialize the AI tool
-tool = {{ tool.name|slugify }}.API(api_key="YOUR_API_KEY")
-
-# Perform a basic operation
-response = tool.generate_text(prompt="Explain quantum computing in simple terms")
-print(response.result)</code></pre>
-                    <p>This example shows how to initialize the API and perform a basic text generation task.</p>
-                </div>
-                {% endif %}
-            </section>
-            
-            <!-- Alternatives Section -->
-            <section class="tool-section">
-                <h2><i class="fas fa-exchange-alt"></i> Alternatives & Comparisons</h2>
-                <div class="alternatives-grid">
-                    {% for comparison in comparisons|slice:":3" %}
-                    <div class="comparison-card">
-                        <div class="comparison-header">
-                            <h3>{{ comparison.title }}</h3>
-                        </div>
-                        <div class="comparison-tools">
-                            {% for comp_tool in comparison.tools.all|slice:":3" %}
-                            <span class="tool-badge {% if comp_tool == tool %}current-tool{% endif %}">
-                                {{ comp_tool.name }}
-                            </span>
-                            {% if not forloop.last %}<span class="vs-badge">VS</span>{% endif %}
-                            {% endfor %}
-                        </div>
-                        <a href="{{ comparison.get_absolute_url }}" class="btn-outline-cyber">
-                            <i class="fas fa-chart-bar"></i> View Comparison
-                        </a>
-                    </div>
-                    {% empty %}
-                    <div class="no-comparisons">
-                        <p>No comparisons available yet for this tool.</p>
-                        <a href="#" class="btn-cyber">
-                            <i class="fas fa-plus"></i> Suggest a Comparison
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
-            </section>
         </div>
         
         <!-- Right Column - Sidebar -->
@@ -250,17 +530,21 @@ print(response.result)</code></pre>
                     </div>
                     
                     <ul class="pricing-features">
+                        {% if tool.pricing_type == 'FRE' or tool.pricing_type == 'FRP' %}
                         <li>
                             <i class="fas fa-check-circle"></i> 
                             Free plan available
                         </li>
+                        {% endif %}
+                        {% if tool.api_available %}
                         <li>
                             <i class="fas fa-check-circle"></i> 
-                            Team pricing options
+                            API access included
                         </li>
+                        {% endif %}
                         <li>
                             <i class="fas fa-check-circle"></i> 
-                            Enterprise solutions
+                            Regular updates
                         </li>
                     </ul>
                     
@@ -304,186 +588,31 @@ print(response.result)</code></pre>
                 </div>
             </div>
             
-            <!-- Ad Space -->
-            <div class="sidebar-card ad-space">
-                <h3><i class="fas fa-bullhorn"></i> Sponsored</h3>
-                <div class="ad-content">
-                    <img src="{% static 'ai_tools/images/ad-placeholder.jpg' %}" alt="Sponsored content">
-                    <h4>Supercharge Your AI Workflow</h4>
-                    <p>Try the all-in-one platform for AI development and deployment.</p>
-                    <a href="#" class="btn-cyber">Learn More</a>
-                </div>
-            </div>
-            
             <!-- Tool Stats -->
             <div class="sidebar-card tool-stats">
                 <h3><i class="fas fa-chart-bar"></i> Tool Stats</h3>
-                <ul class="stats-list">
-                    <li>
-                        <i class="fas fa-calendar-check"></i>
-                        <span class="stat-label">Last Updated</span>
-                        <span class="stat-value">{{ tool.last_verified|date:"M d, Y" }}</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-eye"></i>
-                        <span class="stat-label">Views</span>
-                        <span class="stat-value">1,245</span>
-                    </li>
-                    <li>
-                        <i class="fas fa-heart"></i>
-                        <span class="stat-label">Community Rating</span>
-                        <div class="rating-badge">
-                            <i class="fas fa-star"></i> 4.7/5
-                        </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-sync-alt"></i>
-                        <span class="stat-label">Status</span>
-                        <span class="stat-value verified">Verified</span>
-                    </li>
-                </ul>
+                <div class="pricing-info">
+                    <ul class="pricing-features">
+                        <li>
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Last Updated: {{ tool.last_verified|date:"M d, Y" }}</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-eye"></i>
+                            <span>Views: {{ tool.view_count|intcomma }}</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-star"></i>
+                            <span>Rating: {{ tool.popularity_score|floatformat:1 }}/10</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="verified">Verified Tool</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </aside>
     </div>
-    
-    <!-- Community Section -->
-    <section class="tool-community">
-        <h2><i class="fas fa-users"></i> Community Feedback</h2>
-        
-        <div class="community-tabs">
-            <button class="tab-button active" data-tab="reviews">Reviews</button>
-            <button class="tab-button" data-tab="questions">Questions</button>
-            <button class="tab-button" data-tab="tutorials">Tutorials</button>
-        </div>
-        
-        <div class="tab-content active" id="reviews">
-            <div class="review-summary">
-                <div class="overall-rating">
-                    <div class="rating-score">4.7</div>
-                    <div class="rating-stars">
-                        {% for i in "12345" %}
-                        <i class="fas fa-star"></i>
-                        {% endfor %}
-                    </div>
-                    <div class="rating-count">Based on 42 reviews</div>
-                </div>
-                
-                <div class="rating-bars">
-                    <div class="rating-bar">
-                        <div class="bar-label">5 stars</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 85%;"></div>
-                        </div>
-                        <div class="bar-percent">85%</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="bar-label">4 stars</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 10%;"></div>
-                        </div>
-                        <div class="bar-percent">10%</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="bar-label">3 stars</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 3%;"></div>
-                        </div>
-                        <div class="bar-percent">3%</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="bar-label">2 stars</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 1%;"></div>
-                        </div>
-                        <div class="bar-percent">1%</div>
-                    </div>
-                    <div class="rating-bar">
-                        <div class="bar-label">1 star</div>
-                        <div class="bar-container">
-                            <div class="bar-fill" style="width: 1%;"></div>
-                        </div>
-                        <div class="bar-percent">1%</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="reviews-grid">
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="reviewer">
-                            <div class="reviewer-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="reviewer-info">
-                                <h4>Alex Johnson</h4>
-                                <div class="review-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="review-date">2 days ago</div>
-                    </div>
-                    <div class="review-content">
-                        <h3>Game-changer for content creation</h3>
-                        <p>This tool has revolutionized how I create content. The quality of output is consistently high, and it saves me hours each week. The API integration was straightforward, and their documentation is excellent.</p>
-                    </div>
-                </div>
-                
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="reviewer">
-                            <div class="reviewer-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="reviewer-info">
-                                <h4>Sarah Chen</h4>
-                                <div class="review-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="review-date">1 week ago</div>
-                    </div>
-                    <div class="review-content">
-                        <h3>Great but has a learning curve</h3>
-                        <p>The capabilities are impressive, but it took me a while to get the hang of crafting effective prompts. Once I got past the initial learning curve, I've been able to produce amazing results. Customer support was helpful when I had questions.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="review-cta">
-                <a href="#" class="btn-cyber">
-                    <i class="fas fa-pen"></i> Write a Review
-                </a>
-                <a href="#" class="btn-outline-cyber">
-                    <i class="fas fa-book"></i> See All Reviews (42)
-                </a>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Tool Comparison CTA -->
-    <section class="comparison-cta">
-        <div class="cta-content">
-            <h2>How does {{ tool.name }} compare to alternatives?</h2>
-            <p>Create a custom comparison to see how it stacks up against similar tools</p>
-            <div class="cta-buttons">
-                <a href="#" class="btn-cyber">
-                    <i class="fas fa-balance-scale"></i> Compare Tools
-                </a>
-                <a href="{% url 'ai_tools:tool_list' %}" class="btn-outline-cyber">
-                    <i class="fas fa-list"></i> Browse All Tools
-                </a>
-            </div>
-        </div>
-    </section>
 </div>
 {% endblock %}
