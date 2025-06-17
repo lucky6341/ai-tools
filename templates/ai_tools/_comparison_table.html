@@ -1,0 +1,246 @@
+{% load static %}
+
+<div class="comparison-table-container">
+    <div class="comparison-header">
+        <h3><i class="fas fa-balance-scale"></i> Feature Comparison</h3>
+        <div class="comparison-tools">
+            {% for tool in tools %}
+            <div class="comparison-tool-header">
+                <div class="tool-logo">
+                    {% if tool.logo %}
+                    <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                    {% else %}
+                    <div class="tool-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <h4>{{ tool.name }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="comparison-table-scroll">
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    {% for tool in tools %}
+                    <th>
+                        <div class="tool-name">
+                            {{ tool.name }}
+                        </div>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Pricing -->
+                <tr class="category-row">
+                    <td colspan="{{ tools|length|add:1 }}">Pricing & Plans</td>
+                </tr>
+                <tr>
+                    <td>Pricing Model</td>
+                    {% for tool in tools %}
+                    <td>{{ tool.get_pricing_type_display }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Starting Price</td>
+                    {% for tool in tools %}
+                    <td>{{ tool.price_range|default:"Contact for pricing" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Free Plan</td>
+                    {% for tool in tools %}
+                    <td>{{ tool.pricing_type in "FRE,FRP"|yesno:"Yes,No" }}</td>
+                    {% endfor %}
+                </tr>
+                
+                <!-- Technical Specs -->
+                <tr class="category-row">
+                    <td colspan="{{ tools|length|add:1 }}">Technical Specifications</td>
+                </tr>
+                <tr>
+                    <td>API Access</td>
+                    {% for tool in tools %}
+                    <td>{{ tool.api_available|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Open Source</td>
+                    {% for tool in tools %}
+                    <td>{{ tool.open_source|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Deployment Options</td>
+                    {% for tool in tools %}
+                    <td>{{ tool.deployment_options|join:", "|default:"Cloud" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Technical Complexity</td>
+                    {% for tool in tools %}
+                    <td>
+                        <div class="complexity-meter">
+                            <div class="meter-fill" style="width: {{ tool.technical_complexity|add:'0' }}0%;"></div>
+                            <div class="meter-value">{{ tool.technical_complexity }}/10</div>
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                <!-- Performance -->
+                <tr class="category-row">
+                    <td colspan="{{ tools|length|add:1 }}">Performance</td>
+                </tr>
+                <tr>
+                    <td>Content Quality</td>
+                    {% for tool in tools %}
+                    <td>
+                        <div class="rating-stars">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star{% if forloop.counter <= 4 %} checked{% endif %}"></i>
+                            {% endfor %}
+                            <span>4.0</span>
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Response Speed</td>
+                    {% for tool in tools %}
+                    <td>
+                        <div class="rating-stars">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star{% if forloop.counter <= 4 %} checked{% endif %}"></i>
+                            {% endfor %}
+                            <span>4.2</span>
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Accuracy</td>
+                    {% for tool in tools %}
+                    <td>
+                        <div class="rating-stars">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star{% if forloop.counter <= 3 %} checked{% endif %}"></i>
+                            {% endfor %}
+                            <span>3.8</span>
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+                
+                <!-- Features -->
+                <tr class="category-row">
+                    <td colspan="{{ tools|length|add:1 }}">Features</td>
+                </tr>
+                <tr>
+                    <td>Multimodal Support</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Fine-tuning Capabilities</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Long Context Window</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:3|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Code Generation</td>
+                    {% for tool in tools %}
+                    <td>✅</td>
+                    {% endfor %}
+                </tr>
+                
+                <!-- Integrations -->
+                <tr class="category-row">
+                    <td colspan="{{ tools|length|add:1 }}">Integrations</td>
+                </tr>
+                <tr>
+                    <td>Slack Integration</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Google Workspace</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:3|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Microsoft Office</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Zapier</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:3|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                
+                <!-- Support -->
+                <tr class="category-row">
+                    <td colspan="{{ tools|length|add:1 }}">Support & Documentation</td>
+                </tr>
+                <tr>
+                    <td>24/7 Support</td>
+                    {% for tool in tools %}
+                    <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Community Forum</td>
+                    {% for tool in tools %}
+                    <td>✅</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Documentation Quality</td>
+                    {% for tool in tools %}
+                    <td>
+                        <div class="rating-stars">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star{% if forloop.counter <= 4 %} checked{% endif %}"></i>
+                            {% endfor %}
+                            <span>4.1</span>
+                        </div>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="comparison-actions">
+        <button class="btn-outline-cyber print-btn">
+            <i class="fas fa-print"></i> Print Comparison
+        </button>
+        <button class="btn-cyber export-btn">
+            <i class="fas fa-file-export"></i> Export to PDF
+        </button>
+        <button class="btn-outline-cyber share-btn">
+            <i class="fas fa-share-alt"></i> Share Comparison
+        </button>
+    </div>
+    
+    <div class="comparison-disclaimer">
+        <p><i class="fas fa-info-circle"></i> Information is based on our latest testing and may change. Last updated: {% now "M d, Y" %}</p>
+    </div>
+</div>

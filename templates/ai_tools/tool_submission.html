@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Submit a New AI Tool - TechyVia{% endblock %}
+{% block meta_description %}Contribute to our AI tools directory by submitting a new tool. Help the community discover innovative AI solutions.{% endblock %}
+{% block body_class %}tool-submission{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/submission.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="submission-container">
+    <!-- Submission Header -->
+    <div class="submission-header">
+        <div class="header-content">
+            <h1><i class="fas fa-plus-circle"></i> Submit a New AI Tool</h1>
+            <p class="subtitle">Help us grow the most comprehensive AI tools directory on the web</p>
+            
+            <div class="benefits">
+                <div class="benefit-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Community Contribution</h3>
+                    <p>Share your discoveries with thousands of monthly visitors</p>
+                </div>
+                <div class="benefit-card">
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>Increase Visibility</h3>
+                    <p>Get your favorite tools in front of the right audience</p>
+                </div>
+                <div class="benefit-card">
+                    <i class="fas fa-medal"></i>
+                    <h3>Earn Recognition</h3>
+                    <p>Get credited as the tool submitter</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-image">
+            <img src="{% static 'ai_tools/images/submission-hero.svg' %}" alt="Submit AI Tool">
+        </div>
+    </div>
+    
+    <!-- Submission Process -->
+    <div class="submission-process">
+        <h2><i class="fas fa-list-ol"></i> Submission Process</h2>
+        
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Fill the Form</h3>
+                    <p>Provide details about the AI tool</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Our Review</h3>
+                    <p>Our team verifies the submission</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Published</h3>
+                    <p>Tool goes live in our directory</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>You Get Notified</h3>
+                    <p>We email you when it's published</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Submission Form -->
+    <div class="submission-form">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h2><i class="fas fa-info-circle"></i> Basic Information</h2>
+                
+                <div class="form-group">
+                    <label for="id_name">Tool Name *</label>
+                    <input type="text" id="id_name" name="name" required placeholder="Enter the official name of the tool">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_website">Official Website *</label>
+                        <input type="url" id="id_website" name="website" required placeholder="https://example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_logo">Tool Logo</label>
+                        <div class="file-upload">
+                            <input type="file" id="id_logo" name="logo" accept="image/*">
+                            <label for="id_logo" class="file-label">
+                                <i class="fas fa-upload"></i> 
+                                <span class="file-text">Choose an image</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_description">Short Description *</label>
+                    <textarea id="id_description" name="description" required placeholder="Briefly describe what the tool does (max 300 characters)" maxlength="300"></textarea>
+                    <div class="char-count">0/300</div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2><i class="fas fa-tags"></i> Categorization</h2>
+                
+                <div class="form-group">
+                    <label>Primary Category *</label>
+                    <div class="category-options">
+                        {% for category in categories %}
+                        <div class="category-option">
+                            <input type="radio" name="primary_category" id="category_{{ category.id }}" value="{{ category.id }}" required>
+                            <label for="category_{{ category.id }}">
+                                <i class="{{ category.icon|default:'fas fa-cube' }}"></i>
+                                {{ category.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Additional Categories</label>
+                    <div class="category-options">
+                        {% for category in categories %}
+                        <div class="category-option">
+                            <input type="checkbox" name="categories" id="cat_{{ category.id }}" value="{{ category.id }}">
+                            <label for="cat_{{ category.id }}">
+                                <i class="{{ category.icon|default:'fas fa-cube' }}"></i>
+                                {{ category.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2><i class="fas fa-money-bill-wave"></i> Pricing & Licensing</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_pricing_type">Pricing Model *</label>
+                        <select id="id_pricing_type" name="pricing_type" required>
+                            <option value="">Select pricing model</option>
+                            <option value="FRE">Free</option>
+                            <option value="FRP">Freemium</option>
+                            <option value="SUB">Subscription</option>
+                            <option value="PAY">Pay-per-use</option>
+                            <option value="COM">Commercial</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_price_range">Price Range</label>
+                        <input type="text" id="id_price_range" name="price_range" placeholder="e.g., $0-$10/mo, $0.002/request">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>License Type</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="open_source" value="1">
+                            <span class="checkmark"></span>
+                            Open Source
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="free_tier" value="1">
+                            <span class="checkmark"></span>
+                            Free Tier Available
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="api_available" value="1">
+                            <span class="checkmark"></span>
+                            API Access
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="affiliate" value="1">
+                            <span class="checkmark"></span>
+                            Affiliate Program
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2><i class="fas fa-laptop-code"></i> Technical Details</h2>
+                
+                <div class="form-group">
+                    <label>Deployment Options</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="deployment" value="cloud">
+                            <span class="checkmark"></span>
+                            Cloud
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="deployment" value="on_prem">
+                            <span class="checkmark"></span>
+                            On-Premises
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="deployment" value="hybrid">
+                            <span class="checkmark"></span>
+                            Hybrid
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="deployment" value="browser">
+                            <span class="checkmark"></span>
+                            Browser Extension
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_technical_complexity">Technical Complexity</label>
+                        <select id="id_technical_complexity" name="technical_complexity">
+                            <option value="">Select level</option>
+                            <option value="1">Beginner (No tech skills needed)</option>
+                            <option value="3">Intermediate (Some tech skills)</option>
+                            <option value="6">Advanced (Technical user)</option>
+                            <option value="9">Expert (Developer/Engineer)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_tech_stack">Technology Stack</label>
+                        <input type="text" id="id_tech_stack" name="tech_stack" placeholder="e.g., Python, TensorFlow, React">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2><i class="fas fa-star"></i> Why Recommend This Tool?</h2>
+                
+                <div class="form-group">
+                    <label for="id_why_recommend">Your Recommendation *</label>
+                    <textarea id="id_why_recommend" name="why_recommend" required placeholder="Why do you recommend this tool? What makes it special?"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_use_cases">Best Use Cases</label>
+                    <textarea id="id_use_cases" name="use_cases" placeholder="What tasks is this tool best suited for?"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2><i class="fas fa-user"></i> Your Information</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_name">Your Name *</label>
+                        <input type="text" id="id_submitter_name" name="submitter_name" required placeholder="How should we credit you?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        <input type="email" id="id_email" name="email" required placeholder="Where should we send updates?">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>How did you hear about this tool?</label>
+                    <div class="radio-options">
+                        <label class="radio-option">
+                            <input type="radio" name="discovery" value="personal" checked>
+                            <span class="radiomark"></span>
+                            Personal use
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="discovery" value="work">
+                            <span class="radiomark"></span>
+                            Work/professional use
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="discovery" value="community">
+                            <span class="radiomark"></span>
+                            Community recommendation
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="discovery" value="news">
+                            <span class="radiomark"></span>
+                            News/article
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-footer">
+                <div class="form-note">
+                    <p><i class="fas fa-info-circle"></i> We review all submissions within 48 hours. You'll receive an email when your submission is published.</p>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="reset" class="btn-outline-cyber">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                    <button type="submit" class="btn-cyber">
+                        <i class="fas fa-paper-plane"></i> Submit Tool
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Submission Guidelines -->
+    <div class="submission-guidelines">
+        <h2><i class="fas fa-clipboard-check"></i> Submission Guidelines</h2>
+        
+        <div class="guidelines-content">
+            <div class="guideline">
+                <div class="guideline-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Quality Over Quantity</h3>
+                    <p>We prioritize tools that offer unique value or solve specific problems well.</p>
+                </div>
+            </div>
+            
+            <div class="guideline">
+                <div class="guideline-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>No Spam or Promotions</h3>
+                    <p>Submissions should be genuine recommendations, not promotional content.</p>
+                </div>
+            </div>
+            
+            <div class="guideline">
+                <div class="guideline-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Complete Information</h3>
+                    <p>Ensure all required fields are filled with accurate information.</p>
+                </div>
+            </div>
+            
+            <div class="guideline">
+                <div class="guideline-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Active Tools Only</h3>
+                    <p>We only list tools that are currently available and maintained.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="guideline-cta">
+            <p>By submitting a tool, you agree to our <a href="#">Submission Terms</a> and confirm the information is accurate.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter for description
+    const descriptionField = document.getElementById('id_description');
+    const charCount = document.querySelector('.char-count');
+    
+    if (descriptionField && charCount) {
+        descriptionField.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = `${length}/300`;
+            
+            if (length > 250) {
+                charCount.style.color = '#ff6b6b';
+            } else {
+                charCount.style.color = '#8a8a8a';
+            }
+        });
+    }
+    
+    // File upload label update
+    const fileInput = document.getElementById('id_logo');
+    const fileLabel = document.querySelector('.file-text');
+    
+    if (fileInput && fileLabel) {
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileLabel.textContent = this.files[0].name;
+            } else {
+                fileLabel.textContent = 'Choose an image';
+            }
+        });
+    }
+    
+    // Form reset functionality
+    const resetButton = document.querySelector('button[type="reset"]');
+    if (resetButton) {
+        resetButton.addEventListener('click', function() {
+            if (fileLabel) {
+                fileLabel.textContent = 'Choose an image';
+            }
+            if (charCount) {
+                charCount.textContent = '0/300';
+                charCount.style.color = '#8a8a8a';
+            }
+        });
+    }
+    
+    // Form submission handling
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Add any client-side validation here
+            const toolName = document.getElementById('id_name').value.trim();
+            if (!toolName) {
+                alert('Please enter the tool name');
+                e.preventDefault();
+                return false;
+            }
+            
+            // Add more validations as needed...
+        });
+    }
+});
+</script>
+{% endblock %}

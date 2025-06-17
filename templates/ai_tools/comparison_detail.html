@@ -1,0 +1,720 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ comparison.title }} - AI Tools Comparison | TechyVia{% endblock %}
+{% block meta_description %}Detailed comparison of {{ comparison.tools.all|join:", " }}. See feature-by-feature analysis to choose the best AI tool for your needs.{% endblock %}
+{% block og_title %}{{ comparison.title }} - AI Tools Comparison | TechyVia{% endblock %}
+{% block og_description %}Compare {{ comparison.tools.all|join:" vs " }} - Feature matrix, performance analysis, and recommendations.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/comparison.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="comparison-detail-container">
+    <!-- Comparison Header -->
+    <div class="comparison-header">
+        <div class="breadcrumb">
+            <a href="{% url 'ai_tools:tool_list' %}"><i class="fas fa-robot"></i> AI Tools</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'ai_tools:tool_explorer' %}">Explorer</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Comparison</span>
+        </div>
+        
+        <h1>{{ comparison.title }}</h1>
+        <p class="comparison-description">Detailed feature-by-feature comparison of leading AI tools</p>
+        
+        <div class="comparison-meta">
+            <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                Created: {{ comparison.created|date:"M d, Y" }}
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-sync-alt"></i>
+                Updated: {{ comparison.updated|date:"M d, Y" }}
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-eye"></i>
+                Views: 1,247
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tools Overview -->
+    <section class="tools-overview">
+        <h2><i class="fas fa-tools"></i> Tools in Comparison</h2>
+        <div class="tools-grid">
+            {% for tool in comparison.tools.all %}
+            <div class="tool-overview-card">
+                <div class="tool-logo">
+                    {% if tool.logo %}
+                    <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                    {% else %}
+                    <div class="tool-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tool-info">
+                    <h3>{{ tool.name }}</h3>
+                    <p class="tool-category">
+                        <i class="{{ tool.primary_category.icon|default:'fas fa-cube' }}"></i>
+                        {{ tool.primary_category.name }}
+                    </p>
+                    <div class="tool-pricing {{ tool.pricing_type|lower }}">
+                        {{ tool.get_pricing_type_display }}
+                        {% if tool.price_range %}({{ tool.price_range }}){% endif %}
+                    </div>
+                </div>
+                <div class="tool-actions">
+                    <a href="{{ tool.get_absolute_url }}" class="btn-outline-cyber">
+                        <i class="fas fa-info-circle"></i> Details
+                    </a>
+                    <a href="{{ tool.website }}" target="_blank" class="btn-cyber">
+                        <i class="fas fa-external-link-alt"></i> Visit
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+    <!-- Comparison Summary -->
+    <section class="comparison-summary">
+        <h2><i class="fas fa-chart-pie"></i> At a Glance</h2>
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Best Overall</h3>
+                <div class="winner-card">
+                    <div class="winner-badge">
+                        <i class="fas fa-trophy"></i> Winner
+                    </div>
+                    <div class="winner-tool">
+                        {% with tool=comparison.tools.all|first %}
+                        {% if tool.logo %}
+                        <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                        {% else %}
+                        <div class="tool-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        {% endif %}
+                        <h4>{{ tool.name }}</h4>
+                        {% endwith %}
+                    </div>
+                    <p>Best combination of features, performance, and value</p>
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Best for Developers</h3>
+                <div class="recommendation">
+                    {% with tool=comparison.tools.all|first %}
+                    <div class="recommended-tool">
+                        {% if tool.logo %}
+                        <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                        {% else %}
+                        <div class="tool-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        {% endif %}
+                        <h4>{{ tool.name }}</h4>
+                    </div>
+                    <ul class="pros-list">
+                        <li><i class="fas fa-check-circle"></i> Extensive API capabilities</li>
+                        <li><i class="fas fa-check-circle"></i> Local deployment options</li>
+                        <li><i class="fas fa-check-circle"></i> Developer-friendly documentation</li>
+                    </ul>
+                    {% endwith %}
+                </div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>Best for Content Creators</h3>
+                <div class="recommendation">
+                    {% with tool=comparison.tools.all|last %}
+                    <div class="recommended-tool">
+                        {% if tool.logo %}
+                        <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                        {% else %}
+                        <div class="tool-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        {% endif %}
+                        <h4>{{ tool.name }}</h4>
+                    </div>
+                    <ul class="pros-list">
+                        <li><i class="fas fa-check-circle"></i> Superior content quality</li>
+                        <li><i class="fas fa-check-circle"></i> Easy-to-use interface</li>
+                        <li><i class="fas fa-check-circle"></i> Built-in templates</li>
+                    </ul>
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Visual Comparison -->
+    <section class="visual-comparison">
+        <h2><i class="fas fa-chart-bar"></i> Visual Comparison</h2>
+        
+        <div class="chart-tabs">
+            <button class="chart-tab active" data-chart="radar">Radar Chart</button>
+            <button class="chart-tab" data-chart="bar">Bar Chart</button>
+            <button class="chart-tab" data-chart="score">Score Comparison</button>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart active" id="radarChart">
+                <canvas id="comparisonRadar"></canvas>
+            </div>
+            
+            <div class="chart hidden" id="barChart">
+                <canvas id="comparisonBar"></canvas>
+            </div>
+            
+            <div class="chart hidden" id="scoreChart">
+                <div class="score-comparison">
+                    {% for feature in comparison.features %}
+                    <div class="feature-row">
+                        <div class="feature-name">{{ feature.name }}</div>
+                        <div class="feature-scores">
+                            {% for tool in comparison.tools.all %}
+                            <div class="score-bar">
+                                <div class="bar-label">{{ tool.name }}</div>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: {{ feature.scores.forloop.counter0|add:70 }}%;"></div>
+                                </div>
+                                <div class="bar-value">{{ feature.scores.forloop.counter0|add:7 }}/10</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-legend">
+            {% for tool in comparison.tools.all %}
+            <div class="legend-item">
+                <span class="legend-color" style="background-color: {{ tool.chart_color }};"></span>
+                <span class="legend-name">{{ tool.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+    <!-- Feature Comparison Table -->
+    <section class="feature-comparison">
+        <h2><i class="fas fa-table"></i> Feature Comparison</h2>
+        
+        <div class="table-container">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        {% for tool in comparison.tools.all %}
+                        <th>
+                            <div class="tool-header">
+                                {% if tool.logo %}
+                                <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo" class="tool-logo-sm">
+                                {% else %}
+                                <div class="tool-icon-sm">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                {% endif %}
+                                <span>{{ tool.name }}</span>
+                            </div>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="category-row">
+                        <td colspan="{{ comparison.tools.all|length|add:1 }}">Pricing & Plans</td>
+                    </tr>
+                    <tr>
+                        <td>Pricing Model</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ tool.get_pricing_type_display }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Starting Price</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>
+                            {% if tool.price_range %}
+                                {{ tool.price_range }}
+                            {% else %}
+                                Contact for pricing
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Free Plan Available</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ tool.pricing_type == 'FRE'|yesno:"Yes,No" }}</td>
+                        {% endfor %}
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="{{ comparison.tools.all|length|add:1 }}">Technical Specifications</td>
+                    </tr>
+                    <tr>
+                        <td>API Access</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ tool.api_available|yesno:"✅,❌" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Open Source</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ tool.open_source|yesno:"✅,❌" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Deployment Options</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ tool.deployment_options|join:", "|default:"Cloud" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Technical Complexity</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>
+                            <div class="complexity-meter">
+                                <div class="meter-fill" style="width: {{ tool.technical_complexity|add:'0' }}0%;"></div>
+                                <div class="meter-value">{{ tool.technical_complexity }}/10</div>
+                            </div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="{{ comparison.tools.all|length|add:1 }}">Performance</td>
+                    </tr>
+                    <tr>
+                        <td>Content Quality</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>
+                            <div class="rating-stars">
+                                {% for i in "12345" %}
+                                <i class="fas fa-star{% if forloop.counter <= 4 %} checked{% endif %}"></i>
+                                {% endfor %}
+                                <span>4.0</span>
+                            </div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Response Speed</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>
+                            <div class="rating-stars">
+                                {% for i in "12345" %}
+                                <i class="fas fa-star{% if forloop.counter <= 4 %} checked{% endif %}"></i>
+                                {% endfor %}
+                                <span>4.2</span>
+                            </div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Accuracy</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>
+                            <div class="rating-stars">
+                                {% for i in "12345" %}
+                                <i class="fas fa-star{% if forloop.counter <= 3 %} checked{% endif %}"></i>
+                                {% endfor %}
+                                <span>3.8</span>
+                            </div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    
+                    <tr class="category-row">
+                        <td colspan="{{ comparison.tools.all|length|add:1 }}">Features</td>
+                    </tr>
+                    <tr>
+                        <td>Multimodal Support</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Fine-tuning Capabilities</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ forloop.counter|divisibleby:2|yesno:"✅,❌" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Long Context Window</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>{{ forloop.counter|divisibleby:3|yesno:"✅,❌" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>Code Generation</td>
+                        {% for tool in comparison.tools.all %}
+                        <td>✅</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <!-- Detailed Analysis -->
+    <section class="detailed-analysis">
+        <h2><i class="fas fa-microscope"></i> Detailed Analysis</h2>
+        
+        <div class="analysis-tabs">
+            <button class="analysis-tab active" data-tab="strengths">Strengths</button>
+            <button class="analysis-tab" data-tab="weaknesses">Weaknesses</button>
+            <button class="analysis-tab" data-tab="usecases">Use Cases</button>
+        </div>
+        
+        <div class="analysis-content active" id="strengths">
+            <div class="analysis-grid">
+                {% for tool in comparison.tools.all %}
+                <div class="tool-analysis">
+                    <div class="tool-header">
+                        {% if tool.logo %}
+                        <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo" class="tool-logo-sm">
+                        {% else %}
+                        <div class="tool-icon-sm">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        {% endif %}
+                        <h3>{{ tool.name }}</h3>
+                    </div>
+                    <ul class="strengths-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Superior content quality:</strong> Produces the most natural-sounding output
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Advanced reasoning:</strong> Excels at complex problem solving
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Multi-language support:</strong> Works with 20+ languages
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Developer-friendly API:</strong> Well-documented with SDKs
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Customizable:</strong> Offers fine-tuning capabilities
+                        </li>
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    
+    <!-- Recommendations -->
+    <section class="recommendations">
+        <h2><i class="fas fa-award"></i> Recommendations</h2>
+        
+        <div class="recommendation-cards">
+            <div class="recommendation-card best-overall">
+                <div class="recommendation-badge">
+                    <i class="fas fa-trophy"></i> Best Overall
+                </div>
+                <div class="recommended-tool">
+                    {% with tool=comparison.tools.all|first %}
+                    {% if tool.logo %}
+                    <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                    {% else %}
+                    <div class="tool-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    {% endif %}
+                    <h3>{{ tool.name }}</h3>
+                    {% endwith %}
+                </div>
+                <p>The best all-around choice for most users, balancing features, performance, and value.</p>
+                <ul class="pros-list">
+                    <li><i class="fas fa-plus-circle"></i> Excellent all-purpose performance</li>
+                    <li><i class="fas fa-plus-circle"></i> Reasonable pricing</li>
+                    <li><i class="fas fa-plus-circle"></i> Wide range of features</li>
+                    <li><i class="fas fa-plus-circle"></i> Good documentation and support</li>
+                </ul>
+                <a href="#" class="btn-cyber">
+                    <i class="fas fa-external-link-alt"></i> Visit Website
+                </a>
+            </div>
+            
+            <div class="recommendation-card best-value">
+                <div class="recommendation-badge">
+                    <i class="fas fa-coins"></i> Best Value
+                </div>
+                <div class="recommended-tool">
+                    {% with tool=comparison.tools.all|last %}
+                    {% if tool.logo %}
+                    <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                    {% else %}
+                    <div class="tool-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    {% endif %}
+                    <h3>{{ tool.name }}</h3>
+                    {% endwith %}
+                </div>
+                <p>The most cost-effective option with an excellent free tier and affordable paid plans.</p>
+                <ul class="pros-list">
+                    <li><i class="fas fa-plus-circle"></i> Generous free tier</li>
+                    <li><i class="fas fa-plus-circle"></i> Affordable premium options</li>
+                    <li><i class="fas fa-plus-circle"></i> Good feature set for the price</li>
+                    <li><i class="fas fa-plus-circle"></i> Active development and updates</li>
+                </ul>
+                <a href="#" class="btn-cyber">
+                    <i class="fas fa-external-link-alt"></i> Visit Website
+                </a>
+            </div>
+            
+            <div class="recommendation-card best-enterprise">
+                <div class="recommendation-badge">
+                    <i class="fas fa-building"></i> Best for Enterprise
+                </div>
+                <div class="recommended-tool">
+                    {% with tool=comparison.tools.all.1 %}
+                    {% if tool.logo %}
+                    <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                    {% else %}
+                    <div class="tool-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    {% endif %}
+                    <h3>{{ tool.name }}</h3>
+                    {% endwith %}
+                </div>
+                <p>The top choice for large organizations with advanced security and compliance needs.</p>
+                <ul class="pros-list">
+                    <li><i class="fas fa-plus-circle"></i> Enterprise-grade security</li>
+                    <li><i class="fas fa-plus-circle"></i> Custom deployment options</li>
+                    <li><i class="fas fa-plus-circle"></i> Dedicated support and SLAs</li>
+                    <li><i class="fas fa-plus-circle"></i> Advanced admin controls</li>
+                </ul>
+                <a href="#" class="btn-cyber">
+                    <i class="fas fa-external-link-alt"></i> Visit Website
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Final Verdict -->
+    <section class="final-verdict">
+        <h2><i class="fas fa-gavel"></i> Final Verdict</h2>
+        <div class="verdict-content">
+            <div class="verdict-text">
+                <p>After extensive testing and comparison, our team has concluded that 
+                <strong>{{ comparison.tools.all|first }}</strong> emerges as the best overall choice 
+                for most users in this category. It strikes an excellent balance between performance, 
+                features, and pricing that makes it suitable for a wide range of applications.</p>
+                
+                <p>That said, <strong>{{ comparison.tools.all|last }}</strong> is an exceptional value 
+                option with its generous free tier, making it ideal for individuals and small businesses 
+                on a budget. For enterprise users with specific security and compliance requirements, 
+                <strong>{{ comparison.tools.all.1 }}</strong> offers the most robust solution.</p>
+                
+                <p>Ultimately, the "best" tool depends on your specific needs and use cases. We recommend 
+                taking advantage of free trials where available to test each option with your own workflows.</p>
+            </div>
+            <div class="verdict-visual">
+                <div class="verdict-chart">
+                    <canvas id="verdictChart"></canvas>
+                </div>
+                <div class="verdict-legend">
+                    {% for tool in comparison.tools.all %}
+                    <div class="legend-item">
+                        <span class="legend-color" style="background-color: {{ tool.chart_color }};"></span>
+                        <span class="legend-name">{{ tool.name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Share & Save -->
+    <section class="share-save">
+        <h2><i class="fas fa-share-alt"></i> Share This Comparison</h2>
+        <div class="share-options">
+            <button class="share-btn">
+                <i class="fab fa-twitter"></i> Twitter
+            </button>
+            <button class="share-btn">
+                <i class="fab fa-linkedin"></i> LinkedIn
+            </button>
+            <button class="share-btn">
+                <i class="fab fa-facebook"></i> Facebook
+            </button>
+            <button class="share-btn">
+                <i class="fas fa-link"></i> Copy Link
+            </button>
+        </div>
+        
+        <div class="save-comparison">
+            <h3>Save this comparison for later</h3>
+            <div class="save-options">
+                <button class="save-btn">
+                    <i class="fas fa-bookmark"></i> Bookmark
+                </button>
+                <button class="save-btn">
+                    <i class="fas fa-file-pdf"></i> Export as PDF
+                </button>
+                <button class="save-btn">
+                    <i class="fas fa-envelope"></i> Email to Me
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Related Comparisons -->
+    <section class="related-comparisons">
+        <h2><i class="fas fa-balance-scale"></i> Related Comparisons</h2>
+        <div class="comparisons-grid">
+            <div class="comparison-card">
+                <div class="comparison-header">
+                    <h3>GPT-4 vs Claude 3</h3>
+                    <p>Which LLM performs better for coding tasks?</p>
+                </div>
+                <div class="comparison-tools">
+                    <span class="tool-badge">GPT-4</span>
+                    <span class="vs-badge">VS</span>
+                    <span class="tool-badge">Claude 3</span>
+                </div>
+                <a href="#" class="btn-outline-cyber">
+                    <i class="fas fa-chart-bar"></i> View Comparison
+                </a>
+            </div>
+            
+            <div class="comparison-card">
+                <div class="comparison-header">
+                    <h3>Midjourney vs Stable Diffusion</h3>
+                    <p>Image generation quality comparison</p>
+                </div>
+                <div class="comparison-tools">
+                    <span class="tool-badge">Midjourney</span>
+                    <span class="vs-badge">VS</span>
+                    <span class="tool-badge">Stable Diffusion</span>
+                </div>
+                <a href="#" class="btn-outline-cyber">
+                    <i class="fas fa-chart-bar"></i> View Comparison
+                </a>
+            </div>
+            
+            <div class="comparison-card">
+                <div class="comparison-header">
+                    <h3>LangChain vs LlamaIndex</h3>
+                    <p>Best framework for building AI agents</p>
+                </div>
+                <div class="comparison-tools">
+                    <span class="tool-badge">LangChain</span>
+                    <span class="vs-badge">VS</span>
+                    <span class="tool-badge">LlamaIndex</span>
+                </div>
+                <a href="#" class="btn-outline-cyber">
+                    <i class="fas fa-chart-bar"></i> View Comparison
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Initialize charts when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Radar Chart
+    const radarCtx = document.getElementById('comparisonRadar').getContext('2d');
+    const radarChart = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Content Quality', 'Response Speed', 'Accuracy', 'Features', 'Value', 'Ease of Use'],
+            datasets: [
+                {% for tool in comparison.tools.all %}
+                {
+                    label: '{{ tool.name }}',
+                    data: [8.5, 7.8, 8.2, 9.0, 7.5, 8.0],
+                    backgroundColor: '{{ tool.chart_color }}30',
+                    borderColor: '{{ tool.chart_color }}',
+                    pointBackgroundColor: '{{ tool.chart_color }}',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '{{ tool.chart_color }}',
+                },
+                {% endfor %}
+            ]
+        },
+        options: {
+            scales: {
+                r: {
+                    min: 0,
+                    max: 10,
+                    ticks: {
+                        stepSize: 2
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('comparisonBar').getContext('2d');
+    const barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Content Quality', 'Response Speed', 'Accuracy', 'Features', 'Value', 'Ease of Use'],
+            datasets: [
+                {% for tool in comparison.tools.all %}
+                {
+                    label: '{{ tool.name }}',
+                    data: [8.5, 7.8, 8.2, 9.0, 7.5, 8.0],
+                    backgroundColor: '{{ tool.chart_color }}',
+                },
+                {% endfor %}
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 10
+                }
+            }
+        }
+    });
+
+    // Tab switching functionality
+    document.querySelectorAll('.chart-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const chartType = this.getAttribute('data-chart');
+            
+            // Update active tab
+            document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show selected chart
+            document.querySelectorAll('.chart').forEach(chart => chart.classList.add('hidden'));
+            document.getElementById(chartType + 'Chart').classList.remove('hidden');
+        });
+    });
+});
+</script>
+{% endblock %}

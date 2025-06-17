@@ -1,0 +1,694 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Find Your Perfect AI Tool - TechyVia Quiz{% endblock %}
+{% block meta_description %}Take our 2-minute quiz to discover the best AI tools for your specific needs. Get personalized recommendations based on your use case, technical level, and budget.{% endblock %}
+{% block body_class %}ai-tools-quiz{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/quiz.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+        <div class="quiz-progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 6</div>
+        </div>
+        
+        <h1><i class="fas fa-magic"></i> AI Tools Matchmaker</h1>
+        <p class="quiz-subtitle">Answer 6 simple questions to find your perfect AI tool match</p>
+    </div>
+
+    <!-- Quiz Introduction -->
+    <div class="quiz-step active" id="step0">
+        <div class="step-content intro-content">
+            <div class="intro-image">
+                <img src="{% static 'ai_tools/images/quiz-intro.svg' %}" alt="AI Tools Quiz">
+            </div>
+            
+            <div class="intro-text">
+                <h2>Find Your Ideal AI Assistant</h2>
+                <p>With thousands of AI tools available, finding the right one can be overwhelming. Our smart quiz matches you with the perfect tools based on:</p>
+                
+                <ul class="quiz-benefits">
+                    <li><i class="fas fa-check-circle"></i> Your specific needs and use cases</li>
+                    <li><i class="fas fa-check-circle"></i> Technical expertise level</li>
+                    <li><i class="fas fa-check-circle"></i> Budget constraints</li>
+                    <li><i class="fas fa-check-circle"></i> Team size and collaboration needs</li>
+                </ul>
+                
+                <div class="quiz-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">50,000+</div>
+                        <div class="stat-label">Tools Recommended</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2 min</div>
+                        <div class="stat-label">Average Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-cyber" id="startQuiz">
+                <i class="fas fa-play"></i> Start the Quiz
+            </button>
+        </div>
+    </div>
+
+    <!-- Question 1: Primary Use Case -->
+    <div class="quiz-step" id="step1">
+        <div class="step-content">
+            <div class="question-header">
+                <h2>What will you primarily use AI for?</h2>
+                <p>Select your main area of focus</p>
+            </div>
+            
+            <div class="options-grid">
+                <div class="quiz-option">
+                    <input type="radio" name="use_case" id="use_case_content" value="content">
+                    <label for="use_case_content">
+                        <div class="option-icon">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                        <h3>Content Creation</h3>
+                        <p>Writing, editing, blogging, marketing copy</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="use_case" id="use_case_data" value="data">
+                    <label for="use_case_data">
+                        <div class="option-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Data Analysis</h3>
+                        <p>Analytics, visualization, insights generation</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="use_case" id="use_case_code" value="code">
+                    <label for="use_case_code">
+                        <div class="option-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3>Coding Assistance</h3>
+                        <p>Programming, debugging, documentation</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="use_case" id="use_case_image" value="image">
+                    <label for="use_case_image">
+                        <div class="option-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <h3>Image Generation</h3>
+                        <p>Art, design, illustrations, graphics</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="use_case" id="use_case_research" value="research">
+                    <label for="use_case_research">
+                        <div class="option-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3>Research & Learning</h3>
+                        <p>Information gathering, summarization, education</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="use_case" id="use_case_other" value="other">
+                    <label for="use_case_other">
+                        <div class="option-icon">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                        <h3>Something Else</h3>
+                        <p>Custom applications, specialized tasks</p>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-outline-cyber" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn-cyber next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Question 2: Technical Level -->
+    <div class="quiz-step" id="step2">
+        <div class="step-content">
+            <div class="question-header">
+                <h2>What's your technical expertise level?</h2>
+                <p>Be honest - we'll match tools to your skills</p>
+            </div>
+            
+            <div class="options-list">
+                <div class="quiz-option">
+                    <input type="radio" name="tech_level" id="tech_beginner" value="beginner">
+                    <label for="tech_beginner">
+                        <div class="option-number">1</div>
+                        <div class="option-text">
+                            <h3>Beginner</h3>
+                            <p>New to AI, prefer simple interfaces with no coding</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="tech_level" id="tech_intermediate" value="intermediate">
+                    <label for="tech_intermediate">
+                        <div class="option-number">2</div>
+                        <div class="option-text">
+                            <h3>Intermediate</h3>
+                            <p>Comfortable with tech, can handle some configuration</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="tech_level" id="tech_advanced" value="advanced">
+                    <label for="tech_advanced">
+                        <div class="option-number">3</div>
+                        <div class="option-text">
+                            <h3>Advanced</h3>
+                            <p>Technical professional, comfortable with APIs and coding</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="tech_level" id="tech_expert" value="expert">
+                    <label for="tech_expert">
+                        <div class="option-number">4</div>
+                        <div class="option-text">
+                            <h3>Expert</h3>
+                            <p>AI developer, want full control and customization</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-outline-cyber prev-btn">
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn-cyber next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Question 3: Budget -->
+    <div class="quiz-step" id="step3">
+        <div class="step-content">
+            <div class="question-header">
+                <h2>What's your budget for AI tools?</h2>
+                <p>We'll find options that fit your financial constraints</p>
+            </div>
+            
+            <div class="options-grid">
+                <div class="quiz-option">
+                    <input type="radio" name="budget" id="budget_free" value="free">
+                    <label for="budget_free">
+                        <div class="option-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3>Free Only</h3>
+                        <p>Looking for completely free solutions</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="budget" id="budget_low" value="low">
+                    <label for="budget_low">
+                        <div class="option-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3>Budget-Friendly</h3>
+                        <p>Up to $20/month for essential features</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="budget" id="budget_medium" value="medium">
+                    <label for="budget_medium">
+                        <div class="option-icon">
+                            <i class="fas fa-business-time"></i>
+                        </div>
+                        <h3>Professional</h3>
+                        <p>$20-$100/month for advanced features</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="budget" id="budget_high" value="high">
+                    <label for="budget_high">
+                        <div class="option-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Business</h3>
+                        <p>$100+/month, ROI-focused investment</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="budget" id="budget_enterprise" value="enterprise">
+                    <label for="budget_enterprise">
+                        <div class="option-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>Enterprise</h3>
+                        <p>Custom pricing for large-scale implementation</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="budget" id="budget_unknown" value="unknown">
+                    <label for="budget_unknown">
+                        <div class="option-icon">
+                            <i class="fas fa-question"></i>
+                        </div>
+                        <h3>Not Sure Yet</h3>
+                        <p>Show me options across all price ranges</p>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-outline-cyber prev-btn">
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn-cyber next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Question 4: Team Size -->
+    <div class="quiz-step" id="step4">
+        <div class="step-content">
+            <div class="question-header">
+                <h2>How many people will use the tool?</h2>
+                <p>Affects collaboration features and pricing</p>
+            </div>
+            
+            <div class="options-grid compact">
+                <div class="quiz-option">
+                    <input type="radio" name="team_size" id="team_individual" value="individual">
+                    <label for="team_individual">
+                        <div class="option-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>Just Me</h3>
+                        <p>Personal use only</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="team_size" id="team_small" value="small">
+                    <label for="team_small">
+                        <div class="option-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Small Team</h3>
+                        <p>2-10 people</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="team_size" id="team_medium" value="medium">
+                    <label for="team_medium">
+                        <div class="option-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <h3>Medium Team</h3>
+                        <p>11-50 people</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="team_size" id="team_large" value="large">
+                    <label for="team_large">
+                        <div class="option-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>Large Team</h3>
+                        <p>50+ people</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="team_size" id="team_company" value="company">
+                    <label for="team_company">
+                        <div class="option-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Whole Company</h3>
+                        <p>Enterprise-wide deployment</p>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-outline-cyber prev-btn">
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn-cyber next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Question 5: Deployment -->
+    <div class="quiz-step" id="step5">
+        <div class="step-content">
+            <div class="question-header">
+                <h2>Where do you want to run the AI?</h2>
+                <p>Different deployment options available</p>
+            </div>
+            
+            <div class="options-list">
+                <div class="quiz-option">
+                    <input type="radio" name="deployment" id="deploy_cloud" value="cloud">
+                    <label for="deploy_cloud">
+                        <div class="option-icon">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>Cloud-Based</h3>
+                            <p>Fully hosted solution, nothing to install</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="deployment" id="deploy_local" value="local">
+                    <label for="deploy_local">
+                        <div class="option-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>On-Premises</h3>
+                            <p>Install on my own infrastructure</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="deployment" id="deploy_browser" value="browser">
+                    <label for="deploy_browser">
+                        <div class="option-icon">
+                            <i class="fas fa-window-maximize"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>Browser Extension</h3>
+                            <p>Works directly in my web browser</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="deployment" id="deploy_desktop" value="desktop">
+                    <label for="deploy_desktop">
+                        <div class="option-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>Desktop Application</h3>
+                            <p>Install on my computer</p>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="radio" name="deployment" id="deploy_api" value="api">
+                    <label for="deploy_api">
+                        <div class="option-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>API Integration</h3>
+                            <p>Connect to existing tools via API</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-outline-cyber prev-btn">
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn-cyber next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Question 6: Must-Have Features -->
+    <div class="quiz-step" id="step6">
+        <div class="step-content">
+            <div class="question-header">
+                <h2>Any must-have features?</h2>
+                <p>Select all that apply to your needs</p>
+            </div>
+            
+            <div class="options-grid features">
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_api" value="api">
+                    <label for="feature_api">
+                        <div class="option-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h3>API Access</h3>
+                        <p>For custom integrations</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_mobile" value="mobile">
+                    <label for="feature_mobile">
+                        <div class="option-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile App</h3>
+                        <p>Use on smartphones</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_collab" value="collab">
+                    <label for="feature_collab">
+                        <div class="option-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Collaboration</h3>
+                        <p>Team sharing features</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_history" value="history">
+                    <label for="feature_history">
+                        <div class="option-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>History & Memory</h3>
+                        <p>Remembers past interactions</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_files" value="files">
+                    <label for="feature_files">
+                        <div class="option-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h3>File Uploads</h3>
+                        <p>Process documents, spreadsheets</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_export" value="export">
+                    <label for="feature_export">
+                        <div class="option-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <h3>Export Options</h3>
+                        <p>Save results in multiple formats</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_custom" value="custom">
+                    <label for="feature_custom">
+                        <div class="option-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Customization</h3>
+                        <p>Tailor to my specific needs</p>
+                    </label>
+                </div>
+                
+                <div class="quiz-option">
+                    <input type="checkbox" name="features" id="feature_privacy" value="privacy">
+                    <label for="feature_privacy">
+                        <div class="option-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3>Privacy Focused</h3>
+                        <p>Data doesn't leave my control</p>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="btn-outline-cyber prev-btn">
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn-cyber" id="getResults">
+                <i class="fas fa-calculator"></i> Find My Tools
+            </button>
+        </div>
+    </div>
+</div>
+
+<form id="quizForm" method="post" action="{% url 'ai_tools:quiz_results' %}" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="use_case" id="formUseCase">
+    <input type="hidden" name="tech_level" id="formTechLevel">
+    <input type="hidden" name="budget" id="formBudget">
+    <input type="hidden" name="team_size" id="formTeamSize">
+    <input type="hidden" name="deployment" id="formDeployment">
+    <input type="hidden" name="features" id="formFeatures">
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Quiz state management
+    let currentStep = 0;
+    const totalSteps = 6; // 6 questions (steps 1-6) plus intro (step0)
+    
+    // Elements
+    const steps = document.querySelectorAll('.quiz-step');
+    const prevButtons = document.querySelectorAll('.prev-btn');
+    const nextButtons = document.querySelectorAll('.next-btn');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const startButton = document.getElementById('startQuiz');
+    const getResultsButton = document.getElementById('getResults');
+    const quizForm = document.getElementById('quizForm');
+    
+    // Update progress bar
+    function updateProgress() {
+        const progressPercentage = (currentStep / totalSteps) * 100;
+        progressFill.style.width = `${progressPercentage}%`;
+        progressText.textContent = currentStep === 0 ? "Get Started" : `Question ${currentStep} of ${totalSteps - 1}`;
+    }
+    
+    // Show current step, hide others
+    function showStep(stepIndex) {
+        steps.forEach((step, index) => {
+            if (index === stepIndex) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+        
+        // Scroll to top of quiz container
+        document.querySelector('.quiz-container').scrollTop = 0;
+        
+        // Update progress
+        currentStep = stepIndex;
+        updateProgress();
+    }
+    
+    // Start the quiz
+    startButton.addEventListener('click', function() {
+        showStep(1);
+    });
+    
+    // Next button functionality
+    nextButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const currentStepIndex = parseInt(this.closest('.quiz-step').id.replace('step', ''));
+            showStep(currentStepIndex + 1);
+        });
+    });
+    
+    // Previous button functionality
+    prevButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const currentStepIndex = parseInt(this.closest('.quiz-step').id.replace('step', ''));
+            showStep(currentStepIndex - 1);
+        });
+    });
+    
+    // Get results and submit form
+    getResultsButton.addEventListener('click', function() {
+        // Get selected values
+        const useCase = document.querySelector('input[name="use_case"]:checked')?.value || '';
+        const techLevel = document.querySelector('input[name="tech_level"]:checked')?.value || '';
+        const budget = document.querySelector('input[name="budget"]:checked')?.value || '';
+        const teamSize = document.querySelector('input[name="team_size"]:checked')?.value || '';
+        const deployment = document.querySelector('input[name="deployment"]:checked')?.value || '';
+        
+        // Get selected features
+        const featureCheckboxes = document.querySelectorAll('input[name="features"]:checked');
+        const features = Array.from(featureCheckboxes).map(cb => cb.value).join(',');
+        
+        // Set form values
+        document.getElementById('formUseCase').value = useCase;
+        document.getElementById('formTechLevel').value = techLevel;
+        document.getElementById('formBudget').value = budget;
+        document.getElementById('formTeamSize').value = teamSize;
+        document.getElementById('formDeployment').value = deployment;
+        document.getElementById('formFeatures').value = features;
+        
+        // Submit the form
+        quizForm.submit();
+    });
+    
+    // Enable next buttons when an option is selected
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const step = this.closest('.quiz-step');
+            const nextButton = step.querySelector('.next-btn');
+            if (nextButton) {
+                nextButton.disabled = false;
+            }
+        });
+    });
+    
+    // Initialize progress
+    updateProgress();
+});
+</script>
+{% endblock %}

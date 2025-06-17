@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AI Tools Explorer - Discover & Compare | TechyVia{% endblock %}
+{% block meta_description %}Explore and compare AI tools with our interactive explorer. Filter by category, features, pricing, and technical complexity.{% endblock %}
+{% block body_class %}ai-tools-explorer{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'ai_tools/css/explorer.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="explorer-container">
+    <!-- Explorer Header -->
+    <div class="explorer-header">
+        <h1><i class="fas fa-compass"></i> AI Tools Explorer</h1>
+        <p class="explorer-subtitle">Discover, filter, and compare the best AI tools in our interactive directory</p>
+        
+        <div class="explorer-cta">
+            <a href="{% url 'ai_tools:tool_quiz' %}" class="btn-cyber">
+                <i class="fas fa-magic"></i> Find Your Perfect AI Tool
+            </a>
+            <a href="{% url 'ai_tools:tool_list' %}" class="btn-outline-cyber">
+                <i class="fas fa-list"></i> Browse All Tools
+            </a>
+        </div>
+    </div>
+
+    <!-- Explorer Controls -->
+    <div class="explorer-controls">
+        <!-- Preset Filters -->
+        <div class="preset-filters">
+            <button class="preset-filter active" data-filter="all">All Tools</button>
+            <button class="preset-filter" data-filter="free">Free Tools</button>
+            <button class="preset-filter" data-filter="llm">LLMs</button>
+            <button class="preset-filter" data-filter="image">Image AI</button>
+            <button class="preset-filter" data-filter="coding">Coding Assistants</button>
+        </div>
+        
+        <!-- Search and Actions -->
+        <div class="explorer-actions">
+            <div class="search-box">
+                <input type="text" id="explorerSearch" placeholder="Search tools...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="compareModeToggle" class="btn-outline-cyber">
+                    <i class="fas fa-balance-scale"></i> Compare Mode
+                </button>
+                <button id="saveComparison" class="btn-cyber" disabled>
+                    <i class="fas fa-save"></i> Save Comparison
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explorer Main Content -->
+    <div class="explorer-main">
+        <!-- Filters Panel -->
+        <div class="explorer-filters">
+            <div class="filter-section">
+                <h3><i class="fas fa-filter"></i> Filters</h3>
+                
+                <!-- Categories -->
+                <div class="filter-group">
+                    <h4>Categories</h4>
+                    <div class="filter-options">
+                        {% for category in categories %}
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="{{ category.slug }}">
+                            <span class="checkmark"></span>
+                            <i class="{{ category.icon|default:'fas fa-cube' }}"></i> {{ category.name }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Pricing -->
+                <div class="filter-group">
+                    <h4>Pricing</h4>
+                    <div class="filter-options">
+                        {% for value, label in AITool.PRICING_TYPES %}
+                        <label class="filter-option">
+                            <input type="checkbox" name="pricing" value="{{ value }}">
+                            <span class="checkmark"></span>
+                            {{ label }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Features -->
+                <div class="filter-group">
+                    <h4>Features</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" name="feature" value="api">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-plug"></i> API Available
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="feature" value="opensource">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-code-branch"></i> Open Source
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="feature" value="freetier">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-dollar-sign"></i> Free Tier
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="feature" value="selfhost">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-server"></i> Self-Hosted
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Technical Complexity -->
+                <div class="filter-group">
+                    <h4>Technical Level</h4>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="10" value="5" class="slider" id="complexitySlider">
+                        <div class="slider-labels">
+                            <span>Beginner</span>
+                            <span>Expert</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Use Cases -->
+                <div class="filter-group">
+                    <h4>Primary Use Cases</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" name="usecase" value="content">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-pen"></i> Content Creation
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="usecase" value="data">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-chart-line"></i> Data Analysis
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="usecase" value="coding">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-code"></i> Coding Assistance
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="usecase" value="image">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-image"></i> Image Generation
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="usecase" value="video">
+                            <span class="checkmark"></span>
+                            <i class="fas fa-video"></i> Video Processing
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Reset Filters -->
+                <button id="resetFilters" class="btn-outline-cyber">
+                    <i class="fas fa-sync-alt"></i> Reset All Filters
+                </button>
+            </div>
+        </div>
+        
+        <!-- Results Area -->
+        <div class="explorer-results">
+            <!-- Results Header -->
+            <div class="results-header">
+                <div class="results-count">
+                    <span id="toolsCount">Loading tools...</span>
+                </div>
+                
+                <div class="results-view">
+                    <span>View:</span>
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i> Grid
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i> List
+                    </button>
+                    <button class="view-btn" data-view="radar">
+                        <i class="fas fa-chart-radar"></i> Radar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Comparison Chart -->
+            <div class="chart-container hidden" id="radarView">
+                <canvas id="comparisonRadar"></canvas>
+                <div class="chart-legend" id="radarLegend"></div>
+            </div>
+            
+            <!-- Tools Grid -->
+            <div class="tools-grid" id="gridView">
+                <!-- Tools will be loaded dynamically via JS -->
+            </div>
+            
+            <!-- Tools List -->
+            <div class="tools-list hidden" id="listView">
+                <!-- List view will be loaded dynamically -->
+            </div>
+            
+            <!-- Comparison Mode UI -->
+            <div class="comparison-ui hidden" id="comparisonUI">
+                <div class="comparison-header">
+                    <h3><i class="fas fa-balance-scale"></i> Comparison Mode</h3>
+                    <p>Select 2-4 tools to compare</p>
+                </div>
+                
+                <div class="comparison-selection">
+                    <div class="selected-tools" id="selectedTools">
+                        <!-- Selected tools will appear here -->
+                    </div>
+                    
+                    <div class="comparison-actions">
+                        <button id="clearSelection" class="btn-outline-cyber">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                        <button id="compareSelected" class="btn-cyber" disabled>
+                            <i class="fas fa-chart-bar"></i> Compare Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- No Results Message -->
+            <div class="no-results hidden" id="noResults">
+                <i class="fas fa-robot"></i>
+                <h3>No tools match your filters</h3>
+                <p>Try adjusting your criteria or resetting the filters</p>
+                <button id="resetFiltersBtn" class="btn-cyber">
+                    <i class="fas fa-sync-alt"></i> Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Explorer Tutorial -->
+    <div class="explorer-tutorial">
+        <div class="tutorial-content">
+            <h3><i class="fas fa-graduation-cap"></i> How to Use the Explorer</h3>
+            <div class="tutorial-steps">
+                <div class="tutorial-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Filter Tools</h4>
+                        <p>Use the filters on the left to narrow down tools by category, pricing, features, and technical level.</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Explore Options</h4>
+                        <p>Browse tools in grid, list, or radar view. Hover over tool cards to see quick details.</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Compare Tools</h4>
+                        <p>Enable compare mode and select 2-4 tools to generate a detailed comparison.</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Save & Share</h4>
+                        <p>Save your comparisons or share them with your team for collaborative decision making.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data container for tools -->
+{{ tools_json|json_script:"tools-data" }}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'ai_tools/js/explorer.js' %}"></script>
+{% endblock %}

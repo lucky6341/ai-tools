@@ -1,0 +1,95 @@
+{% load static %}
+{% load humanize %}
+
+<div class="tool-card" data-tool-id="{{ tool.id }}" data-tool-slug="{{ tool.slug }}">
+    <div class="tool-card-header">
+        <div class="tool-logo">
+            {% if tool.logo %}
+            <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo" loading="lazy">
+            {% else %}
+            <div class="tool-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="tool-meta">
+            <span class="tool-category">
+                <i class="{{ tool.primary_category.icon|default:'fas fa-cube' }}"></i>
+                {{ tool.primary_category.name }}
+            </span>
+            <span class="tool-pricing {{ tool.pricing_type|lower }}">
+                {{ tool.get_pricing_type_display }}
+                {% if tool.price_range %}<span class="price-range">{{ tool.price_range }}</span>{% endif %}
+            </span>
+        </div>
+        
+        {% if tool.is_featured %}
+        <div class="featured-badge">
+            <i class="fas fa-star"></i> Featured
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="tool-card-body">
+        <h3 class="tool-title">
+            <a href="{{ tool.get_absolute_url }}">{{ tool.name }}</a>
+        </h3>
+        <p class="tool-description">
+            {{ tool.short_description }}
+        </p>
+        
+        <div class="tool-features">
+            {% if tool.api_available %}
+            <span class="tool-feature" title="API Access">
+                <i class="fas fa-plug"></i> API
+            </span>
+            {% endif %}
+            {% if tool.open_source %}
+            <span class="tool-feature" title="Open Source">
+                <i class="fas fa-code-branch"></i> Open Source
+            </span>
+            {% endif %}
+            {% if tool.pricing_type == 'FRE' or tool.pricing_type == 'FRP' %}
+            <span class="tool-feature" title="Free Tier Available">
+                <i class="fas fa-dollar-sign"></i> Free
+            </span>
+            {% endif %}
+            {% if "Cloud" in tool.deployment_options %}
+            <span class="tool-feature" title="Cloud Deployment">
+                <i class="fas fa-cloud"></i> Cloud
+            </span>
+            {% endif %}
+        </div>
+        
+        <div class="tool-stats">
+            <div class="stat">
+                <i class="fas fa-eye"></i> {{ tool.view_count|intcomma }}
+            </div>
+            <div class="stat">
+                <i class="fas fa-heart"></i> {{ tool.like_count|intcomma }}
+            </div>
+            <div class="stat">
+                <i class="fas fa-chart-line"></i> {{ tool.popularity_score|floatformat:1 }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="tool-card-footer">
+        <a href="{{ tool.get_absolute_url }}" class="btn-outline-cyber">
+            <i class="fas fa-info-circle"></i> Details
+        </a>
+        <a href="{{ tool.website }}" target="_blank" class="btn-cyber">
+            <i class="fas fa-external-link-alt"></i> Visit
+        </a>
+        <button class="compare-add" data-tool-id="{{ tool.id }}">
+            <i class="fas fa-balance-scale"></i>
+        </button>
+    </div>
+    
+    {% if tool.last_verified %}
+    <div class="tool-verified">
+        <i class="fas fa-shield-alt"></i> Verified {{ tool.last_verified|date:"M d, Y" }}
+    </div>
+    {% endif %}
+</div>

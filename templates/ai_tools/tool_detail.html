@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ tool.name }} - AI Tool Details | TechyVia{% endblock %}
+{% block meta_description %}{{ tool.short_description }}{% endblock %}
+{% block og_title %}{{ tool.name }} - AI Tool Review | TechyVia{% endblock %}
+{% block og_description %}Detailed review of {{ tool.name }} - {{ tool.short_description }}{% endblock %}
+
+{% block body_class %}ai-tool-detail{% endblock %}
+
+{% block content %}
+<div class="ai-tool-detail-container">
+    <!-- Tool Header -->
+    <div class="tool-header">
+        <div class="tool-breadcrumb">
+            <a href="{% url 'ai_tools:tool_list' %}"><i class="fas fa-robot"></i> AI Tools</a> 
+            <i class="fas fa-chevron-right"></i>
+            <span>{{ tool.name }}</span>
+        </div>
+        
+        <div class="tool-header-content">
+            <div class="tool-logo">
+                {% if tool.logo %}
+                <img src="{{ tool.logo.url }}" alt="{{ tool.name }} logo">
+                {% else %}
+                <div class="tool-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="tool-header-info">
+                <h1>{{ tool.name }}</h1>
+                <p class="tool-tagline">{{ tool.short_description }}</p>
+                
+                <div class="tool-meta">
+                    <span class="tool-category">
+                        <i class="{{ tool.primary_category.icon|default:'fas fa-cube' }}"></i>
+                        {{ tool.primary_category.name }}
+                    </span>
+                    <span class="tool-pricing {{ tool.pricing_type|lower }}">
+                        {{ tool.get_pricing_type_display }}
+                        {% if tool.price_range %}({{ tool.price_range }}){% endif %}
+                    </span>
+                    
+                    <div class="tool-actions">
+                        <a href="{{ tool.website }}" target="_blank" class="btn-cyber">
+                            <i class="fas fa-external-link-alt"></i> Official Website
+                        </a>
+                        {% if tool.affiliate_link %}
+                        <a href="{{ tool.affiliate_link }}" target="_blank" class="btn-cyber">
+                            <i class="fas fa-shopping-cart"></i> Get Deal
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="tool-detail-main">
+        <!-- Left Column - Main Content -->
+        <div class="tool-detail-content">
+            <!-- Description -->
+            <section class="tool-section">
+                <h2><i class="fas fa-file-alt"></i> Overview</h2>
+                <div class="tool-description">
+                    {{ tool.description|safe }}
+                </div>
+            </section>
+            
+            <!-- Key Features -->
+            <section class="tool-section">
+                <h2><i class="fas fa-star"></i> Key Features</h2>
+                <div class="features-grid">
+                    {% for feature, score in tool.use_case_matrix.items %}
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <h3>{{ feature|title }}</h3>
+                            <div class="feature-rating">
+                                <div class="rating-stars" style="--rating: {{ score }};">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star"></i>
+                                    {% endfor %}
+                                </div>
+                                <span>{{ score }}/10</span>
+                            </div>
+                        </div>
+                        <p>How well this tool performs for {{ feature }} tasks</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            
+            <!-- Technical Details -->
+            <section class="tool-section">
+                <h2><i class="fas fa-cogs"></i> Technical Specifications</h2>
+                <div class="specs-grid">
+                    <div class="spec-card">
+                        <i class="fas fa-plug"></i>
+                        <h3>API Access</h3>
+                        <p>{{ tool.api_available|yesno:"Available,Not Available" }}</p>
+                    </div>
+                    
+                    <div class="spec-card">
+                        <i class="fas fa-code-branch"></i>
+                        <h3>Open Source</h3>
+                        <p>{{ tool.open_source|yesno:"Yes,No" }}</p>
+                    </div>
+                    
+                    <div class="spec-card">
+                        <i class="fas fa-server"></i>
+                        <h3>Deployment</h3>
+                        <p>
+                            {% if tool.deployment_options %}
+                                {{ tool.deployment_options|join:", " }}
+                            {% else %}
+                                Cloud-based
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="spec-card">
+                        <i class="fas fa-brain"></i>
+                        <h3>Technical Level</h3>
+                        <div class="complexity-meter">
+                            <div class="meter-fill" style="width: {{ tool.technical_complexity|add:'0' }}0%;"></div>
+                            <div class="meter-labels">
+                                <span>Beginner</span>
+                                <span>Expert</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Use Cases -->
+            <section class="tool-section">
+                <h2><i class="fas fa-tasks"></i> Practical Use Cases</h2>
+                <div class="use-cases">
+                    <div class="use-case-card">
+                        <div class="use-case-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <div class="use-case-content">
+                            <h3>Content Creation</h3>
+                            <p>Generate blog posts, marketing copy, social media content, and creative writing with AI assistance.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="use-case-content">
+                            <h3>Data Analysis</h3>
+                            <p>Process and analyze large datasets, generate insights, and create visual reports automatically.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="use-case-content">
+                            <h3>Code Assistance</h3>
+                            <p>Get AI-powered code suggestions, debugging help, and documentation generation for various programming languages.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Tutorial/Getting Started -->
+            <section class="tool-section">
+                <h2><i class="fas fa-graduation-cap"></i> Getting Started</h2>
+                {% if tool.getting_started_video %}
+                <div class="video-container">
+                    <iframe src="{{ tool.getting_started_video }}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen></iframe>
+                </div>
+                {% endif %}
+                
+                {% if tool.quick_start_guide %}
+                <div class="quick-start-guide">
+                    {{ tool.quick_start_guide|safe }}
+                </div>
+                {% else %}
+                <div class="quick-start-guide">
+                    <h3>Basic Usage Example</h3>
+                    <pre><code class="language-python">import {{ tool.name|slugify }}
+
+# Initialize the AI tool
+tool = {{ tool.name|slugify }}.API(api_key="YOUR_API_KEY")
+
+# Perform a basic operation
+response = tool.generate_text(prompt="Explain quantum computing in simple terms")
+print(response.result)</code></pre>
+                    <p>This example shows how to initialize the API and perform a basic text generation task.</p>
+                </div>
+                {% endif %}
+            </section>
+            
+            <!-- Alternatives Section -->
+            <section class="tool-section">
+                <h2><i class="fas fa-exchange-alt"></i> Alternatives & Comparisons</h2>
+                <div class="alternatives-grid">
+                    {% for comparison in comparisons|slice:":3" %}
+                    <div class="comparison-card">
+                        <div class="comparison-header">
+                            <h3>{{ comparison.title }}</h3>
+                        </div>
+                        <div class="comparison-tools">
+                            {% for comp_tool in comparison.tools.all|slice:":3" %}
+                            <span class="tool-badge {% if comp_tool == tool %}current-tool{% endif %}">
+                                {{ comp_tool.name }}
+                            </span>
+                            {% if not forloop.last %}<span class="vs-badge">VS</span>{% endif %}
+                            {% endfor %}
+                        </div>
+                        <a href="{{ comparison.get_absolute_url }}" class="btn-outline-cyber">
+                            <i class="fas fa-chart-bar"></i> View Comparison
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="no-comparisons">
+                        <p>No comparisons available yet for this tool.</p>
+                        <a href="#" class="btn-cyber">
+                            <i class="fas fa-plus"></i> Suggest a Comparison
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+        
+        <!-- Right Column - Sidebar -->
+        <aside class="tool-detail-sidebar">
+            <!-- Pricing Card -->
+            <div class="sidebar-card pricing-card">
+                <h3><i class="fas fa-tags"></i> Pricing</h3>
+                <div class="pricing-info">
+                    <div class="pricing-tier">
+                        <h4>{{ tool.get_pricing_type_display }}</h4>
+                        {% if tool.price_range %}
+                        <p class="price">{{ tool.price_range }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <ul class="pricing-features">
+                        <li>
+                            <i class="fas fa-check-circle"></i> 
+                            Free plan available
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i> 
+                            Team pricing options
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i> 
+                            Enterprise solutions
+                        </li>
+                    </ul>
+                    
+                    <div class="pricing-cta">
+                        {% if tool.affiliate_link %}
+                        <a href="{{ tool.affiliate_link }}" class="btn-cyber" target="_blank">
+                            <i class="fas fa-shopping-cart"></i> Get Special Deal
+                        </a>
+                        {% else %}
+                        <a href="{{ tool.website }}" class="btn-cyber" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Visit Pricing Page
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Similar Tools -->
+            <div class="sidebar-card similar-tools">
+                <h3><i class="fas fa-random"></i> Similar Tools</h3>
+                <div class="similar-tools-list">
+                    {% for similar in similar_tools %}
+                    <a href="{{ similar.get_absolute_url }}" class="similar-tool">
+                        <div class="similar-tool-logo">
+                            {% if similar.logo %}
+                            <img src="{{ similar.logo.url }}" alt="{{ similar.name }} logo">
+                            {% else %}
+                            <div class="similar-tool-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="similar-tool-info">
+                            <h4>{{ similar.name }}</h4>
+                            <span class="similar-tool-category">{{ similar.primary_category.name }}</span>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <p class="no-similar">No similar tools found</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Ad Space -->
+            <div class="sidebar-card ad-space">
+                <h3><i class="fas fa-bullhorn"></i> Sponsored</h3>
+                <div class="ad-content">
+                    <img src="{% static 'ai_tools/images/ad-placeholder.jpg' %}" alt="Sponsored content">
+                    <h4>Supercharge Your AI Workflow</h4>
+                    <p>Try the all-in-one platform for AI development and deployment.</p>
+                    <a href="#" class="btn-cyber">Learn More</a>
+                </div>
+            </div>
+            
+            <!-- Tool Stats -->
+            <div class="sidebar-card tool-stats">
+                <h3><i class="fas fa-chart-bar"></i> Tool Stats</h3>
+                <ul class="stats-list">
+                    <li>
+                        <i class="fas fa-calendar-check"></i>
+                        <span class="stat-label">Last Updated</span>
+                        <span class="stat-value">{{ tool.last_verified|date:"M d, Y" }}</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-eye"></i>
+                        <span class="stat-label">Views</span>
+                        <span class="stat-value">1,245</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-heart"></i>
+                        <span class="stat-label">Community Rating</span>
+                        <div class="rating-badge">
+                            <i class="fas fa-star"></i> 4.7/5
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="stat-label">Status</span>
+                        <span class="stat-value verified">Verified</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Community Section -->
+    <section class="tool-community">
+        <h2><i class="fas fa-users"></i> Community Feedback</h2>
+        
+        <div class="community-tabs">
+            <button class="tab-button active" data-tab="reviews">Reviews</button>
+            <button class="tab-button" data-tab="questions">Questions</button>
+            <button class="tab-button" data-tab="tutorials">Tutorials</button>
+        </div>
+        
+        <div class="tab-content active" id="reviews">
+            <div class="review-summary">
+                <div class="overall-rating">
+                    <div class="rating-score">4.7</div>
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                        <i class="fas fa-star"></i>
+                        {% endfor %}
+                    </div>
+                    <div class="rating-count">Based on 42 reviews</div>
+                </div>
+                
+                <div class="rating-bars">
+                    <div class="rating-bar">
+                        <div class="bar-label">5 stars</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 85%;"></div>
+                        </div>
+                        <div class="bar-percent">85%</div>
+                    </div>
+                    <div class="rating-bar">
+                        <div class="bar-label">4 stars</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 10%;"></div>
+                        </div>
+                        <div class="bar-percent">10%</div>
+                    </div>
+                    <div class="rating-bar">
+                        <div class="bar-label">3 stars</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 3%;"></div>
+                        </div>
+                        <div class="bar-percent">3%</div>
+                    </div>
+                    <div class="rating-bar">
+                        <div class="bar-label">2 stars</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 1%;"></div>
+                        </div>
+                        <div class="bar-percent">1%</div>
+                    </div>
+                    <div class="rating-bar">
+                        <div class="bar-label">1 star</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 1%;"></div>
+                        </div>
+                        <div class="bar-percent">1%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer">
+                            <div class="reviewer-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="reviewer-info">
+                                <h4>Alex Johnson</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-date">2 days ago</div>
+                    </div>
+                    <div class="review-content">
+                        <h3>Game-changer for content creation</h3>
+                        <p>This tool has revolutionized how I create content. The quality of output is consistently high, and it saves me hours each week. The API integration was straightforward, and their documentation is excellent.</p>
+                    </div>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer">
+                            <div class="reviewer-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="reviewer-info">
+                                <h4>Sarah Chen</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-date">1 week ago</div>
+                    </div>
+                    <div class="review-content">
+                        <h3>Great but has a learning curve</h3>
+                        <p>The capabilities are impressive, but it took me a while to get the hang of crafting effective prompts. Once I got past the initial learning curve, I've been able to produce amazing results. Customer support was helpful when I had questions.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="review-cta">
+                <a href="#" class="btn-cyber">
+                    <i class="fas fa-pen"></i> Write a Review
+                </a>
+                <a href="#" class="btn-outline-cyber">
+                    <i class="fas fa-book"></i> See All Reviews (42)
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Tool Comparison CTA -->
+    <section class="comparison-cta">
+        <div class="cta-content">
+            <h2>How does {{ tool.name }} compare to alternatives?</h2>
+            <p>Create a custom comparison to see how it stacks up against similar tools</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn-cyber">
+                    <i class="fas fa-balance-scale"></i> Compare Tools
+                </a>
+                <a href="{% url 'ai_tools:tool_list' %}" class="btn-outline-cyber">
+                    <i class="fas fa-list"></i> Browse All Tools
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
